@@ -1,4 +1,3 @@
-直接复制下面这一整个代码块，覆盖 `README.md` 就行。
 
 ````markdown
 # nail-ai-ops
