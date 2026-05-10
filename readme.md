@@ -1,5 +1,5 @@
 
-````markdown
+
 # nail-ai-ops
 
 美甲 AI 试戴与智能运营助手  
@@ -179,7 +179,7 @@ nail-ai-ops/
 
 ## 团队分工
 
-### lr
+### A
 
 负责项目统筹、技术架构、GitHub 仓库、Demo 集成、客户端流程和 AI 调用。
 
@@ -252,4 +252,4 @@ nail-ai-ops/
 项目处于 Hackathon MVP 设计与原型开发阶段。
 
 ```
-```
+
