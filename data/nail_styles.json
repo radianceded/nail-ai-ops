@@ -1,0 +1,1250 @@
+﻿{
+    "version":  "2.2",
+    "created_date":  "2026-05-11",
+    "updated_date":  "2026-05-11",
+    "total_styles":  25,
+    "data_source":  "auto_labeled_with_description",
+    "styles":  [
+                   {
+                       "style_id":  "nail_001",
+                       "name":  "法式美甲",
+                       "display_name":  "法式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "法式美甲",
+                                                  "韩式美甲"
+                                              ],
+                                    "color":  [
+                                                  "白色",
+                                                  "透明色",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "法式",
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "婚礼",
+                                                  "休闲",
+                                                  "日常",
+                                                  "约会",
+                                                  "通勤"
+                                              ]
+                                },
+                       "color":  "白色+透明色+灰色系",
+                       "length":  "短款",
+                       "texture":  "亮面",
+                       "scene":  "婚礼/休闲/日常/约会/通勤",
+                       "image_path":  "assets/nail_styles/nail_001.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_001.png",
+                       "popularity":  95,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "适合婚礼、休闲场景的白色、透明色法式美甲，亮面质感搭配法式、渐变工艺，中长款设计百搭实用。"
+                   },
+                   {
+                       "style_id":  "nail_002",
+                       "name":  "法式美甲",
+                       "display_name":  "法式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "法式美甲",
+                                                  "韩式美甲"
+                                              ],
+                                    "color":  [
+                                                  "白色",
+                                                  "红色系",
+                                                  "透明色"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "哑光"
+                                                ],
+                                    "craft":  [
+                                                  "法式",
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "婚礼",
+                                                  "休闲",
+                                                  "日常",
+                                                  "约会",
+                                                  "通勤"
+                                              ]
+                                },
+                       "color":  "白色+红色系+透明色",
+                       "length":  "短款",
+                       "texture":  "哑光",
+                       "scene":  "婚礼/休闲/日常/约会/通勤",
+                       "image_path":  "assets/nail_styles/nail_002.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_002.png",
+                       "popularity":  95,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "法式、渐变工艺打造的白色、红色系法式美甲，哑光质感高级，中长款设计兼顾美感与实用，推荐婚礼、休闲场合使用。"
+                   },
+                   {
+                       "style_id":  "nail_003",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "红色系",
+                                                  "白色",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "闪粉",
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "红色系+白色+灰色系",
+                       "length":  "短款",
+                       "texture":  "闪粉+亮面",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_003.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_003.png",
+                       "popularity":  70,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "适合舞台、派对场景的红色系、白色艺术风，闪粉质感搭配渐变、手绘工艺，中长款设计百搭实用。"
+                   },
+                   {
+                       "style_id":  "nail_004",
+                       "name":  "法式美甲",
+                       "display_name":  "法式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "法式美甲"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "白色",
+                                                  "红色系"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "闪粉",
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "法式",
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "婚礼",
+                                                  "日常",
+                                                  "通勤"
+                                              ]
+                                },
+                       "color":  "灰色系+白色+红色系",
+                       "length":  "短款",
+                       "texture":  "闪粉+亮面",
+                       "scene":  "婚礼/日常/通勤",
+                       "image_path":  "assets/nail_styles/nail_004.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_004.png",
+                       "popularity":  95,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "法式美甲风格设计，灰色系、白色配色搭配闪粉质感，法式、渐变工艺精致细腻，适合婚礼、日常佩戴的中长款美甲。"
+                   },
+                   {
+                       "style_id":  "nail_005",
+                       "name":  "法式美甲",
+                       "display_name":  "法式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "法式美甲"
+                                              ],
+                                    "color":  [
+                                                  "白色",
+                                                  "红色系",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "哑光"
+                                                ],
+                                    "craft":  [
+                                                  "法式",
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "婚礼",
+                                                  "日常",
+                                                  "通勤"
+                                              ]
+                                },
+                       "color":  "白色+红色系+灰色系",
+                       "length":  "短款",
+                       "texture":  "哑光",
+                       "scene":  "婚礼/日常/通勤",
+                       "image_path":  "assets/nail_styles/nail_005.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_005.png",
+                       "popularity":  95,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "法式、渐变工艺打造的白色、红色系法式美甲，哑光质感高级，中长款设计兼顾美感与实用，推荐婚礼、日常场合使用。"
+                   },
+                   {
+                       "style_id":  "nail_006",
+                       "name":  "法式美甲",
+                       "display_name":  "法式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "法式美甲"
+                                              ],
+                                    "color":  [
+                                                  "白色",
+                                                  "灰色系",
+                                                  "红色系"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "法式",
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "婚礼",
+                                                  "日常",
+                                                  "通勤"
+                                              ]
+                                },
+                       "color":  "白色+灰色系+红色系",
+                       "length":  "长款",
+                       "texture":  "亮面",
+                       "scene":  "婚礼/日常/通勤",
+                       "image_path":  "assets/nail_styles/nail_006.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_006.png",
+                       "popularity":  95,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "一款白色、灰色系色调的法式美甲，采用法式、渐变工艺呈现亮面效果，尤其适合婚礼、日常场合，中长款甲型舒适自然。"
+                   },
+                   {
+                       "style_id":  "nail_007",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "白色",
+                                                  "红色系"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "灰色系+白色+红色系",
+                       "length":  "长款",
+                       "texture":  "亮面",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_007.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_007.png",
+                       "popularity":  70,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "艺术风风格设计，灰色系、白色配色搭配亮面质感，渐变、手绘工艺精致细腻，适合舞台、派对佩戴的中长款美甲。"
+                   },
+                   {
+                       "style_id":  "nail_008",
+                       "name":  "酷飒风美甲",
+                       "display_name":  "酷飒风",
+                       "tags":  {
+                                    "style":  [
+                                                  "酷飒风"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "红色系",
+                                                  "黑色"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "哑光"
+                                                ],
+                                    "craft":  [
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "派对",
+                                                  "休闲"
+                                              ]
+                                },
+                       "color":  "灰色系+红色系+黑色",
+                       "length":  "长款",
+                       "texture":  "哑光",
+                       "scene":  "派对/休闲",
+                       "image_path":  "assets/nail_styles/nail_008.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_008.png",
+                       "popularity":  60,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "酷飒风风格设计，灰色系、红色系配色搭配哑光质感，渐变工艺精致细腻，适合派对、休闲佩戴的中长款美甲。"
+                   },
+                   {
+                       "style_id":  "nail_009",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "红色系",
+                                                  "紫色系"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "灰色系+红色系+紫色系",
+                       "length":  "长款",
+                       "texture":  "亮面",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_009.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_009.png",
+                       "popularity":  70,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "艺术风风格设计，灰色系、红色系配色搭配亮面质感，渐变工艺精致细腻，适合舞台、派对佩戴的中长款美甲。"
+                   },
+                   {
+                       "style_id":  "nail_010",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "白色",
+                                                  "红色系",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "白色+红色系+灰色系",
+                       "length":  "长款",
+                       "texture":  "亮面",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_010.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_010.png",
+                       "popularity":  70,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "以白色、红色系为主调的艺术风，亮面表面搭配渐变技法，中长款甲型适合舞台、派对等多种场景。"
+                   },
+                   {
+                       "style_id":  "nail_011",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "红色系",
+                                                  "白色"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "灰色系+红色系+白色",
+                       "length":  "长款",
+                       "texture":  "亮面",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_011.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_011.png",
+                       "popularity":  70,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "渐变、手绘工艺打造的灰色系、红色系艺术风，亮面质感高级，中长款设计兼顾美感与实用，推荐舞台、派对场合使用。"
+                   },
+                   {
+                       "style_id":  "nail_012",
+                       "name":  "韩式美甲",
+                       "display_name":  "韩式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "韩式美甲"
+                                              ],
+                                    "color":  [
+                                                  "绿色系",
+                                                  "透明色",
+                                                  "红色系"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "闪粉",
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "休闲",
+                                                  "约会"
+                                              ]
+                                },
+                       "color":  "绿色系+透明色+红色系",
+                       "length":  "长款",
+                       "texture":  "闪粉+亮面",
+                       "scene":  "休闲/约会",
+                       "image_path":  "assets/nail_styles/nail_012.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_012.png",
+                       "popularity":  95,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "以绿色系、透明色为主调的韩式美甲，闪粉表面搭配渐变、手绘技法，中长款甲型适合休闲、约会等多种场景。"
+                   },
+                   {
+                       "style_id":  "nail_013",
+                       "name":  "法式美甲",
+                       "display_name":  "法式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "法式美甲",
+                                                  "韩式美甲"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "白色",
+                                                  "透明色"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "法式",
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "婚礼",
+                                                  "休闲",
+                                                  "日常",
+                                                  "约会",
+                                                  "通勤"
+                                              ]
+                                },
+                       "color":  "灰色系+白色+透明色",
+                       "length":  "长款",
+                       "texture":  "亮面",
+                       "scene":  "婚礼/休闲/日常/约会/通勤",
+                       "image_path":  "assets/nail_styles/nail_013.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_013.png",
+                       "popularity":  95,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "适合婚礼、休闲场景的灰色系、白色法式美甲，亮面质感搭配法式、渐变工艺，中长款设计百搭实用。"
+                   },
+                   {
+                       "style_id":  "nail_014",
+                       "name":  "韩式美甲",
+                       "display_name":  "韩式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "韩式美甲"
+                                              ],
+                                    "color":  [
+                                                  "粉色系",
+                                                  "白色",
+                                                  "透明色"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "贴钻"
+                                              ],
+                                    "scene":  [
+                                                  "约会",
+                                                  "休闲",
+                                                  "日常"
+                                              ]
+                                },
+                       "color":  "粉色系+白色+透明色",
+                       "length":  "长款",
+                       "texture":  "亮面",
+                       "scene":  "约会/休闲/日常",
+                       "image_path":  "assets/nail_styles/nail_014.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_014.png",
+                       "popularity":  90,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "一款粉色系、白色色调的韩式美甲，采用渐变、贴钻工艺呈现亮面效果，尤其适合约会、休闲场合，中长款甲型舒适自然。"
+                   },
+                   {
+                       "style_id":  "nail_015",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "白色",
+                                                  "红色系",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "哑光"
+                                                ],
+                                    "craft":  [
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "白色+红色系+灰色系",
+                       "length":  "短款",
+                       "texture":  "哑光",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_015.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_015.png",
+                       "popularity":  70,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "以白色、红色系为主调的艺术风，哑光表面搭配渐变技法，中长款甲型适合舞台、派对等多种场景。"
+                   },
+                   {
+                       "style_id":  "nail_016",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "蓝色系",
+                                                  "紫色系",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "晕染",
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "蓝色系+紫色系+灰色系",
+                       "length":  "短款",
+                       "texture":  "亮面",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_016.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_016.png",
+                       "popularity":  65,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "晕染、渐变工艺打造的蓝色系、紫色系艺术风，亮面质感高级，中长款设计兼顾美感与实用，推荐舞台、派对场合使用。"
+                   },
+                   {
+                       "style_id":  "nail_017",
+                       "name":  "酷飒风美甲",
+                       "display_name":  "酷飒风",
+                       "tags":  {
+                                    "style":  [
+                                                  "酷飒风"
+                                              ],
+                                    "color":  [
+                                                  "紫色系",
+                                                  "红色系",
+                                                  "黑色"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "闪粉",
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "派对",
+                                                  "休闲"
+                                              ]
+                                },
+                       "color":  "紫色系+红色系+黑色",
+                       "length":  "长款",
+                       "texture":  "闪粉+亮面",
+                       "scene":  "派对/休闲",
+                       "image_path":  "assets/nail_styles/nail_017.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_017.png",
+                       "popularity":  60,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "酷飒风风格设计，紫色系、红色系配色搭配闪粉质感，渐变、手绘工艺精致细腻，适合派对、休闲佩戴的中长款美甲。"
+                   },
+                   {
+                       "style_id":  "nail_018",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "白色",
+                                                  "红色系"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "哑光"
+                                                ],
+                                    "craft":  [
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "灰色系+白色+红色系",
+                       "length":  "短款",
+                       "texture":  "哑光",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_018.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_018.png",
+                       "popularity":  70,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "一款灰色系、白色色调的艺术风，采用渐变工艺呈现哑光效果，尤其适合舞台、派对场合，中长款甲型舒适自然。"
+                   },
+                   {
+                       "style_id":  "nail_019",
+                       "name":  "法式美甲",
+                       "display_name":  "法式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "法式美甲",
+                                                  "韩式美甲"
+                                              ],
+                                    "color":  [
+                                                  "透明色",
+                                                  "白色",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "法式",
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "婚礼",
+                                                  "休闲",
+                                                  "日常",
+                                                  "约会",
+                                                  "通勤"
+                                              ]
+                                },
+                       "color":  "透明色+白色+灰色系",
+                       "length":  "长款",
+                       "texture":  "亮面",
+                       "scene":  "婚礼/休闲/日常/约会/通勤",
+                       "image_path":  "assets/nail_styles/nail_019.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_019.png",
+                       "popularity":  95,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "一款透明色、白色色调的法式美甲，采用法式、渐变工艺呈现亮面效果，尤其适合婚礼、休闲场合，中长款甲型舒适自然。"
+                   },
+                   {
+                       "style_id":  "nail_020",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "绿色系",
+                                                  "白色",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "长款"
+                                               ],
+                                    "texture":  [
+                                                    "哑光"
+                                                ],
+                                    "craft":  [
+                                                  "手绘",
+                                                  "纯色"
+                                              ],
+                                    "scene":  [
+                                                  "休闲",
+                                                  "日常"
+                                              ]
+                                },
+                       "color":  "绿色系+白色+灰色系",
+                       "length":  "长款",
+                       "texture":  "哑光",
+                       "scene":  "休闲/日常",
+                       "image_path":  "assets/nail_styles/nail_020.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_020.png",
+                       "popularity":  65,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "适合休闲、日常场景的绿色系、白色艺术风，哑光质感搭配手绘、纯色工艺，中长款设计百搭实用。"
+                   },
+                   {
+                       "style_id":  "nail_021",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "红色系",
+                                                  "白色"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "灰色系+红色系+白色",
+                       "length":  "短款",
+                       "texture":  "亮面",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_021.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_021.png",
+                       "popularity":  70,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "渐变工艺打造的灰色系、红色系艺术风，亮面质感高级，中长款设计兼顾美感与实用，推荐舞台、派对场合使用。"
+                   },
+                   {
+                       "style_id":  "nail_022",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "白色",
+                                                  "灰色系",
+                                                  "红色系"
+                                              ],
+                                    "length":  [
+                                                   "中长款"
+                                               ],
+                                    "texture":  [
+                                                    "哑光"
+                                                ],
+                                    "craft":  [
+                                                  "渐变"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "白色+灰色系+红色系",
+                       "length":  "中长款",
+                       "texture":  "哑光",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_022.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_022.png",
+                       "popularity":  70,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "适合舞台、派对场景的白色、灰色系艺术风，哑光质感搭配渐变工艺，中长款设计百搭实用。"
+                   },
+                   {
+                       "style_id":  "nail_023",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "粉色系",
+                                                  "白色",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "中长款"
+                                               ],
+                                    "texture":  [
+                                                    "亮面",
+                                                    "闪粉"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "约会",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "粉色系+白色+灰色系",
+                       "length":  "中长款",
+                       "texture":  "亮面+闪粉",
+                       "scene":  "约会/派对",
+                       "image_path":  "assets/nail_styles/nail_023.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_023.png",
+                       "popularity":  75,
+                       "difficulty":  "medium",
+                       "duration":  45,
+                       "suitable_skin_tones":  [
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "艺术风风格设计，粉色系、白色配色搭配亮面质感，渐变、手绘工艺精致细腻，适合约会、派对佩戴的中长款美甲。"
+                   },
+                   {
+                       "style_id":  "nail_024",
+                       "name":  "艺术风美甲",
+                       "display_name":  "艺术风",
+                       "tags":  {
+                                    "style":  [
+                                                  "艺术风"
+                                              ],
+                                    "color":  [
+                                                  "灰色系",
+                                                  "红色系",
+                                                  "白色"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "闪粉",
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "舞台",
+                                                  "派对"
+                                              ]
+                                },
+                       "color":  "灰色系+红色系+白色",
+                       "length":  "短款",
+                       "texture":  "闪粉+亮面",
+                       "scene":  "舞台/派对",
+                       "image_path":  "assets/nail_styles/nail_024.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_024.png",
+                       "popularity":  70,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "一款灰色系、红色系色调的艺术风，采用渐变、手绘工艺呈现闪粉效果，尤其适合舞台、派对场合，中长款甲型舒适自然。"
+                   },
+                   {
+                       "style_id":  "nail_025",
+                       "name":  "韩式美甲",
+                       "display_name":  "韩式美甲",
+                       "tags":  {
+                                    "style":  [
+                                                  "韩式美甲"
+                                              ],
+                                    "color":  [
+                                                  "绿色系",
+                                                  "透明色",
+                                                  "灰色系"
+                                              ],
+                                    "length":  [
+                                                   "短款"
+                                               ],
+                                    "texture":  [
+                                                    "闪粉",
+                                                    "亮面"
+                                                ],
+                                    "craft":  [
+                                                  "渐变",
+                                                  "手绘"
+                                              ],
+                                    "scene":  [
+                                                  "休闲",
+                                                  "约会"
+                                              ]
+                                },
+                       "color":  "绿色系+透明色+灰色系",
+                       "length":  "短款",
+                       "texture":  "闪粉+亮面",
+                       "scene":  "休闲/约会",
+                       "image_path":  "assets/nail_styles/nail_025.png",
+                       "thumbnail_path":  "assets/nail_styles/thumb_nail_025.png",
+                       "popularity":  90,
+                       "difficulty":  "hard",
+                       "duration":  75,
+                       "suitable_skin_tones":  [
+                                                   "warm",
+                                                   "cool",
+                                                   "neutral"
+                                               ],
+                       "suitable_hand_types":  [
+                                                   "small",
+                                                   "average",
+                                                   "long"
+                                               ],
+                       "description":  "一款绿色系、透明色色调的韩式美甲，采用渐变、手绘工艺呈现闪粉效果，尤其适合休闲、约会场合，中长款甲型舒适自然。"
+                   }
+               ]
+}
