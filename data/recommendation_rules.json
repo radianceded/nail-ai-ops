@@ -1,0 +1,221 @@
+{
+  "version": "1.0",
+  "updated_date": "2026-05-11",
+  "description": "AI推荐系统规则配置 — 供 ai_recommend_service.py 直接读取",
+
+  "base_weights": {
+    "skin_tone_match": 0.25,
+    "hand_type_match": 0.20,
+    "scene_match": 0.20,
+    "style_preference": 0.15,
+    "color_preference": 0.10,
+    "trend_factor": 0.10
+  },
+
+  "skin_tone_rules": {
+    "cool": {
+      "description": "冷色调肤色（粉调），手腕血管呈蓝色或紫色",
+      "preferred_colors": ["蓝色系", "紫色系", "粉色系"],
+      "secondary_colors": ["灰色系", "银色"],
+      "avoid_colors": ["橙色系", "黄色系"],
+      "recommended_styles": ["韩式美甲", "甜美风", "法式美甲"],
+      "recommended_textures": ["猫眼", "亮面"]
+    },
+    "warm": {
+      "description": "暖色调肤色（黄调），手腕血管呈绿色",
+      "preferred_colors": ["红色系", "橙色系", "金银色"],
+      "secondary_colors": ["棕色系", "裸色"],
+      "avoid_colors": ["蓝色系", "紫色系"],
+      "recommended_styles": ["经典款", "欧美风", "复古风"],
+      "recommended_textures": ["金属", "亮面"]
+    },
+    "neutral": {
+      "description": "中性肤色，手腕血管呈蓝绿色",
+      "preferred_colors": ["裸色", "粉色系"],
+      "secondary_colors": ["所有颜色均可尝试"],
+      "avoid_colors": [],
+      "recommended_styles": ["经典款", "法式美甲", "极简风", "艺术风"],
+      "recommended_textures": ["亮面", "哑光"]
+    }
+  },
+
+  "hand_type_rules": {
+    "long": {
+      "description": "手指纤细修长，骨节不明显",
+      "recommended_lengths": ["中长款", "长款", "超长款"],
+      "recommended_styles": ["欧美风", "艺术风"],
+      "recommended_crafts": ["雕花", "立体装饰", "手绘"],
+      "avoid": "过短的指甲设计"
+    },
+    "small": {
+      "description": "手指短而小巧，掌心较小",
+      "recommended_lengths": ["短款", "中长款"],
+      "recommended_styles": ["韩式美甲", "日式美甲", "甜美风"],
+      "recommended_crafts": ["简约设计", "小巧装饰"],
+      "avoid": "过于夸张的设计"
+    },
+    "thick": {
+      "description": "手指较粗，骨节明显",
+      "recommended_lengths": ["中长款"],
+      "recommended_styles": ["经典款", "极简风", "法式美甲"],
+      "recommended_crafts": ["竖向线条", "渐变"],
+      "avoid": "横向线条、复杂装饰"
+    },
+    "wide": {
+      "description": "手掌较宽，手指相对较短",
+      "recommended_lengths": ["中长款"],
+      "recommended_styles": ["经典款", "法式美甲", "几何风"],
+      "recommended_crafts": ["简单设计"],
+      "avoid": "过于小巧的装饰"
+    }
+  },
+
+  "scene_adjustments": {
+    "日常": {
+      "style_boost": { "经典款": 1.2, "自然风": 1.1, "艺术风": 0.7 },
+      "color_preference": ["裸色", "粉色系", "自然色系"],
+      "length_preference": ["短款", "中长款"],
+      "texture_preference": ["亮面", "哑光"],
+      "craft_preference": ["纯色", "法式", "渐变"]
+    },
+    "通勤": {
+      "style_boost": { "经典款": 1.3, "法式美甲": 1.2, "欧美风": 0.6 },
+      "color_preference": ["中性色系", "自然色系"],
+      "length_preference": ["短款"],
+      "texture_preference": ["亮面", "哑光"],
+      "craft_preference": ["法式", "纯色"]
+    },
+    "约会": {
+      "style_boost": { "韩式美甲": 1.3, "甜美风": 1.2, "经典款": 0.8 },
+      "color_preference": ["粉色系", "红色系"],
+      "length_preference": ["中长款"],
+      "texture_preference": ["亮面", "珠光"],
+      "craft_preference": ["渐变", "闪粉", "贴钻"]
+    },
+    "派对": {
+      "style_boost": { "欧美风": 1.4, "艺术风": 1.3, "经典款": 0.5 },
+      "color_preference": ["深色系", "金属色", "亮色系"],
+      "length_preference": ["中长款", "长款"],
+      "texture_preference": ["闪粉", "金属", "镜面"],
+      "craft_preference": ["复杂装饰", "立体效果"]
+    },
+    "婚礼": {
+      "style_boost": { "法式美甲": 1.4, "奢华风": 1.3, "酷飒风": 0.5 },
+      "color_preference": ["裸色", "粉色系", "金银色", "白色"],
+      "length_preference": ["中长款"],
+      "texture_preference": ["亮面", "珠光"],
+      "craft_preference": ["法式", "贴钻", "立体装饰", "珍珠"]
+    },
+    "休闲": {
+      "style_boost": { "自然风": 1.2, "韩式美甲": 1.1, "极简风": 1.1 },
+      "color_preference": ["自然色系", "裸色"],
+      "length_preference": ["短款", "中长款"],
+      "texture_preference": ["亮面"],
+      "craft_preference": ["纯色", "简单渐变"]
+    },
+    "舞台": {
+      "style_boost": { "艺术风": 1.5, "欧美风": 1.4, "经典款": 0.4 },
+      "color_preference": ["深色系", "金属色", "亮色系"],
+      "length_preference": ["长款", "超长款"],
+      "texture_preference": ["闪粉", "金属", "镜面", "猫眼"],
+      "craft_preference": ["手绘", "雕花", "立体装饰"]
+    }
+  },
+
+  "age_group_rules": {
+    "18-25": {
+      "preferred_styles": ["韩式美甲", "日式美甲", "艺术风", "欧美风"],
+      "preferred_colors": ["粉色系", "亮色系", "渐变色"],
+      "preferred_crafts": ["复杂工艺", "立体装饰"],
+      "risk_tolerance": "high",
+      "weights": { "trend_factor": 0.40, "style_preference": 0.30, "scene_match": 0.20, "base_match": 0.10 }
+    },
+    "26-35": {
+      "preferred_styles": ["经典款", "韩式美甲", "极简风"],
+      "preferred_colors": ["自然色系", "暖色系"],
+      "preferred_crafts": ["精致工艺"],
+      "risk_tolerance": "medium",
+      "weights": { "base_match": 0.30, "scene_match": 0.30, "quality_factor": 0.25, "trend_factor": 0.15 }
+    },
+    "36-45": {
+      "preferred_styles": ["经典款", "法式美甲", "自然风"],
+      "preferred_colors": ["中性色系", "自然色系"],
+      "preferred_crafts": ["简约工艺", "经典设计"],
+      "risk_tolerance": "low",
+      "weights": { "base_match": 0.40, "style_preference": 0.30, "scene_match": 0.20, "quality_factor": 0.10 }
+    }
+  },
+
+  "occupation_rules": {
+    "office": {
+      "safe_choices": ["法式美甲", "裸色纯色", "浅粉色"],
+      "avoid": "过于鲜艳、夸张装饰",
+      "focus": "整洁、专业、优雅"
+    },
+    "creative": {
+      "encourage": ["艺术风", "欧美风", "个性化设计"],
+      "try": ["新颖工艺", "特殊效果"],
+      "focus": "个性表达、创意体现"
+    },
+    "service": {
+      "focus": "实用性强、易维护",
+      "avoid": "过长指甲、易损装饰",
+      "choice": "简约、耐用、安全"
+    }
+  },
+
+  "seasonal_rules": {
+    "春季": {
+      "colors": ["粉色系", "绿色系"],
+      "styles": ["自然风", "甜美风"],
+      "textures": ["亮面", "珠光"],
+      "themes": ["花朵", "蝴蝶", "清新"]
+    },
+    "夏季": {
+      "colors": ["亮色系", "蓝色系", "橙色系"],
+      "styles": ["自然风", "艺术风"],
+      "textures": ["亮面", "果冻"],
+      "themes": ["海洋", "水果", "夏日"]
+    },
+    "秋季": {
+      "colors": ["暖色系", "棕色系", "红色系"],
+      "styles": ["复古风", "经典款"],
+      "textures": ["哑光", "珠光"],
+      "themes": ["落叶", "温暖", "成熟"]
+    },
+    "冬季": {
+      "colors": ["深色系", "金银色", "红色系"],
+      "styles": ["奢华风", "经典款"],
+      "textures": ["金属", "闪粉"],
+      "themes": ["节日", "雪花", "奢华"]
+    }
+  },
+
+  "special_cases": {
+    "new_user": {
+      "strategy": "基于基础信息进行保守推荐",
+      "recommended_styles": ["经典法式美甲", "裸色纯色款", "浅粉色渐变款"]
+    },
+    "no_preference": {
+      "strategy": "基于场景和基础匹配推荐",
+      "output_count": "3-5个不同风格选项"
+    },
+    "allergy": {
+      "strategy": "推荐低敏材质，避免复杂化学工艺"
+    },
+    "frequent_washing": {
+      "strategy": "推荐持久性强的款式，避免容易脱落的装饰"
+    },
+    "weak_nails": {
+      "strategy": "推荐短款设计，避免过长指甲，选择加固型产品"
+    }
+  },
+
+  "user_profile_schema": {
+    "skin_tone": { "type": "string", "enum": ["warm", "cool", "neutral"] },
+    "hand_type": { "type": "string", "enum": ["long", "small", "thick", "wide"] },
+    "age_group": { "type": "string", "enum": ["18-25", "26-35", "36-45", "45+"] },
+    "occupation": { "type": "string", "enum": ["office", "creative", "service", "student"] },
+    "lifestyle": { "type": "string", "enum": ["active", "sedentary", "social", "professional"] }
+  }
+}

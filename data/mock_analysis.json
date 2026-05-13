@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "updated_date": "2026-05-11",
+  "description": "基于 nail_styles.json v2.2 实际数据的统计分析 + 模拟用户行为数据，供测试和 Demo 使用",
+  "data_source": "nail_styles.json v2.2",
+
+  "style_distribution": {
+    "艺术风": { "count": 13, "percentage": 52.0, "primary_scenes": ["舞台", "派对"] },
+    "法式美甲": { "count": 7, "percentage": 28.0, "primary_scenes": ["婚礼", "日常", "通勤"] },
+    "韩式美甲": { "count": 7, "percentage": 28.0, "primary_scenes": ["约会", "休闲", "日常"] },
+    "酷飒风": { "count": 2, "percentage": 8.0, "primary_scenes": ["派对", "休闲"] }
+  },
+
+  "color_distribution": {
+    "灰色系": { "count": 21, "percentage": 84.0 },
+    "白色": { "count": 19, "percentage": 76.0 },
+    "红色系": { "count": 17, "percentage": 68.0 },
+    "透明色": { "count": 7, "percentage": 28.0 },
+    "粉色系": { "count": 3, "percentage": 12.0 },
+    "绿色系": { "count": 3, "percentage": 12.0 },
+    "黑色": { "count": 2, "percentage": 8.0 },
+    "蓝色系": { "count": 2, "percentage": 8.0 },
+    "紫色系": { "count": 1, "percentage": 4.0 }
+  },
+
+  "length_distribution": {
+    "短款": { "count": 11, "percentage": 44.0 },
+    "中长款": { "count": 2, "percentage": 8.0 },
+    "长款": { "count": 12, "percentage": 48.0 }
+  },
+
+  "texture_distribution": {
+    "亮面": { "count": 18, "percentage": 72.0 },
+    "哑光": { "count": 7, "percentage": 28.0 },
+    "闪粉": { "count": 7, "percentage": 28.0 }
+  },
+
+  "craft_distribution": {
+    "渐变": { "count": 24, "percentage": 96.0 },
+    "手绘": { "count": 11, "percentage": 44.0 },
+    "法式": { "count": 7, "percentage": 28.0 },
+    "贴钻": { "count": 1, "percentage": 4.0 },
+    "晕染": { "count": 1, "percentage": 4.0 },
+    "纯色": { "count": 1, "percentage": 4.0 }
+  },
+
+  "scene_distribution": {
+    "派对": { "count": 14, "percentage": 56.0 },
+    "舞台": { "count": 11, "percentage": 44.0 },
+    "休闲": { "count": 10, "percentage": 40.0 },
+    "日常": { "count": 9, "percentage": 36.0 },
+    "约会": { "count": 8, "percentage": 32.0 },
+    "婚礼": { "count": 7, "percentage": 28.0 },
+    "通勤": { "count": 7, "percentage": 28.0 }
+  },
+
+  "difficulty_distribution": {
+    "medium": { "count": 15, "percentage": 60.0 },
+    "hard": { "count": 10, "percentage": 40.0 }
+  },
+
+  "popularity_stats": {
+    "average": 78.6,
+    "min": 60,
+    "max": 95,
+    "median": 70
+  },
+
+  "trend_analysis": {
+    "2026_trends": ["自然裸色系回归", "极简风格持续流行", "环保材质关注度上升", "个性化定制需求增加"],
+    "hot_colors": ["裸色", "灰色系", "粉色系"],
+    "hot_styles": ["韩式美甲", "法式美甲", "极简风"],
+    "rising_textures": ["哑光", "猫眼", "果冻"]
+  },
+
+  "mock_user_behavior": {
+    "description": "模拟用户选择数据，用于 Demo 展示和推荐算法测试",
+    "scenarios": [
+      {
+        "user_id": "mock_001",
+        "scene": "日常",
+        "skin_tone": "warm",
+        "hand_type": "small",
+        "age_group": "26-35",
+        "occupation": "office",
+        "expected_style": "法式美甲",
+        "expected_color": "裸色"
+      },
+      {
+        "user_id": "mock_002",
+        "scene": "约会",
+        "skin_tone": "cool",
+        "hand_type": "long",
+        "age_group": "18-25",
+        "occupation": "student",
+        "expected_style": "韩式美甲",
+        "expected_color": "粉色系"
+      },
+      {
+        "user_id": "mock_003",
+        "scene": "派对",
+        "skin_tone": "neutral",
+        "hand_type": "long",
+        "age_group": "18-25",
+        "occupation": "creative",
+        "expected_style": "艺术风",
+        "expected_color": "黑色"
+      },
+      {
+        "user_id": "mock_004",
+        "scene": "通勤",
+        "skin_tone": "warm",
+        "hand_type": "small",
+        "age_group": "26-35",
+        "occupation": "office",
+        "expected_style": "法式美甲",
+        "expected_color": "白色"
+      },
+      {
+        "user_id": "mock_005",
+        "scene": "婚礼",
+        "skin_tone": "cool",
+        "hand_type": "average",
+        "age_group": "26-35",
+        "occupation": "creative",
+        "expected_style": "法式美甲",
+        "expected_color": "白色"
+      }
+    ]
+  },
+
+  "data_quality_notes": {
+    "warnings": [
+      "「灰色系」出现在 84% 的款式中，可能自动标注过度",
+      "「渐变」工艺出现在 96% 的款式中，可能自动标注过度",
+      "缺少 easy 难度款式，难度分布不均衡",
+      "缺少「超长款」款式",
+      "建议人工复核颜色和工艺标签"
+    ],
+    "recommendation": "后续扩展时注意补充超长款、easy 难度和纯色工艺的款式"
+  }
+}

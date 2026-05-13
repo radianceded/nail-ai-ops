@@ -1,0 +1,157 @@
+{
+  "version": "1.0",
+  "updated_date": "2026-05-11",
+  "description": "美甲款式标签体系 — 后端可直接读取的枚举值和规则配置",
+  "dimensions": {
+    "style": {
+      "name": "风格分类",
+      "description": "美甲的整体设计风格，反映美学特征和文化元素",
+      "priority": 1,
+      "required": true,
+      "max_count": 2,
+      "values": [
+        { "id": "classic", "label": "经典款", "description": "传统简约设计，适合日常佩戴" },
+        { "id": "french", "label": "法式美甲", "description": "经典法式边设计，优雅百搭" },
+        { "id": "japanese", "label": "日式美甲", "description": "日式可爱风，注重细节和立体感" },
+        { "id": "korean", "label": "韩式美甲", "description": "韩系清新风格，色彩柔和" },
+        { "id": "western", "label": "欧美风", "description": "大胆前卫，色彩丰富" },
+        { "id": "vintage", "label": "复古风", "description": "怀旧复古元素，怀旧色调" },
+        { "id": "minimal", "label": "极简风", "description": "简约线条，少即是多" },
+        { "id": "artistic", "label": "艺术风", "description": "创意艺术表现，独特设计" },
+        { "id": "natural", "label": "自然风", "description": "自然元素，清新淡雅" },
+        { "id": "luxury", "label": "奢华风", "description": "高端奢华，钻饰丰富" },
+        { "id": "sweet", "label": "甜美风", "description": "可爱甜美，粉色系为主" },
+        { "id": "cool", "label": "酷飒风", "description": "个性酷炫，深色系" },
+        { "id": "ethnic", "label": "民族风", "description": "民族图案，文化元素" },
+        { "id": "geometric", "label": "几何风", "description": "几何图形，现代感强" }
+      ]
+    },
+    "color": {
+      "name": "颜色分类",
+      "description": "美甲的主色调和配色方案",
+      "priority": 2,
+      "required": false,
+      "max_count": 3,
+      "values": [
+        { "id": "transparent", "label": "透明色", "description": "透明或半透明底色" },
+        { "id": "nude", "label": "裸色", "description": "自然肤色系，含裸粉、裸棕、裸灰" },
+        { "id": "pink", "label": "粉色系", "description": "粉红、玫瑰粉、豆沙粉、珊瑚粉" },
+        { "id": "red", "label": "红色系", "description": "正红、酒红、樱桃红、砖红" },
+        { "id": "orange", "label": "橙色系", "description": "橙色、珊瑚橙、南瓜橙" },
+        { "id": "yellow", "label": "黄色系", "description": "明黄、柠檬黄、香槟金" },
+        { "id": "green", "label": "绿色系", "description": "薄荷绿、墨绿、橄榄绿、翠绿" },
+        { "id": "blue", "label": "蓝色系", "description": "天蓝、宝蓝、深蓝、雾霾蓝" },
+        { "id": "purple", "label": "紫色系", "description": "薰衣草紫、葡萄紫、深紫" },
+        { "id": "brown", "label": "棕色系", "description": "咖啡色、巧克力色、焦糖色" },
+        { "id": "gray", "label": "灰色系", "description": "浅灰、深灰、银灰" },
+        { "id": "black", "label": "黑色", "description": "纯黑色" },
+        { "id": "white", "label": "白色", "description": "纯白色" },
+        { "id": "gold_silver", "label": "金银色", "description": "金色、银色" }
+      ],
+      "schemes": [
+        { "id": "single", "label": "单色", "description": "单一颜色" },
+        { "id": "dual", "label": "双色", "description": "两种颜色搭配" },
+        { "id": "multi", "label": "多色", "description": "三种及以上颜色" },
+        { "id": "gradient", "label": "渐变色", "description": "颜色渐变效果" },
+        { "id": "contrast", "label": "撞色", "description": "对比色搭配" },
+        { "id": "tonal", "label": "同色系", "description": "同一色系深浅搭配" }
+      ]
+    },
+    "length": {
+      "name": "长度分类",
+      "description": "指甲的长度分类，影响整体视觉效果",
+      "priority": 3,
+      "required": true,
+      "max_count": 1,
+      "values": [
+        { "id": "short", "label": "短款", "description": "指甲长度适中，甲床露出较多" },
+        { "id": "medium", "label": "中长款", "description": "指甲稍长，甲床露出适中" },
+        { "id": "long", "label": "长款", "description": "指甲较长，甲床露出较少" },
+        { "id": "extra_long", "label": "超长款", "description": "指甲很长，艺术性强" }
+      ]
+    },
+    "texture": {
+      "name": "质地分类",
+      "description": "美甲表面的质感和特殊效果",
+      "priority": 4,
+      "required": true,
+      "max_count": 2,
+      "values": [
+        { "id": "glossy", "label": "亮面", "category": "basic" },
+        { "id": "matte", "label": "哑光", "category": "basic" },
+        { "id": "semi_matte", "label": "半哑光", "category": "basic" },
+        { "id": "cat_eye", "label": "猫眼", "category": "special" },
+        { "id": "glitter", "label": "闪粉", "category": "special" },
+        { "id": "pearl", "label": "珠光", "category": "special" },
+        { "id": "metallic", "label": "金属", "category": "special" },
+        { "id": "frosted", "label": "磨砂", "category": "special" },
+        { "id": "jelly", "label": "果冻", "category": "special" },
+        { "id": "mirror", "label": "镜面", "category": "special" }
+      ]
+    },
+    "craft": {
+      "name": "工艺分类",
+      "description": "美甲的制作工艺和技术特点",
+      "priority": 5,
+      "required": false,
+      "max_count": 2,
+      "values": [
+        { "id": "solid", "label": "纯色", "category": "basic" },
+        { "id": "gradient", "label": "渐变", "category": "basic" },
+        { "id": "french_tip", "label": "法式", "category": "basic" },
+        { "id": "ombre", "label": "晕染", "category": "basic" },
+        { "id": "marble", "label": "大理石", "category": "basic" },
+        { "id": "water_ripple", "label": "水波纹", "category": "basic" },
+        { "id": "sticker", "label": "贴纸", "category": "decoration" },
+        { "id": "hand_painted", "label": "手绘", "category": "decoration" },
+        { "id": "carving", "label": "雕花", "category": "decoration" },
+        { "id": "rhinestone", "label": "贴钻", "category": "decoration" },
+        { "id": "stud", "label": "铆钉", "category": "decoration" },
+        { "id": "chain", "label": "链条", "category": "decoration" },
+        { "id": "pearl_decor", "label": "珍珠", "category": "decoration" },
+        { "id": "3d_decor", "label": "立体装饰", "category": "decoration" },
+        { "id": "gel_extension", "label": "光疗", "category": "special" },
+        { "id": "crystal_extension", "label": "水晶", "category": "special" },
+        { "id": "nail_tip", "label": "贴片", "category": "special" },
+        { "id": "3d_effect", "label": "3D", "category": "special" },
+        { "id": "hollow", "label": "镂空", "category": "special" }
+      ]
+    },
+    "scene": {
+      "name": "场景分类",
+      "description": "美甲的适用场景和场合",
+      "priority": 6,
+      "required": true,
+      "max_count": 3,
+      "values": [
+        { "id": "daily", "label": "日常", "category": "daily" },
+        { "id": "work", "label": "通勤", "category": "daily" },
+        { "id": "date", "label": "约会", "category": "daily" },
+        { "id": "casual", "label": "休闲", "category": "daily" },
+        { "id": "wedding", "label": "婚礼", "category": "special" },
+        { "id": "party", "label": "派对", "category": "special" },
+        { "id": "festival", "label": "节日", "category": "special" },
+        { "id": "vacation", "label": "度假", "category": "special" },
+        { "id": "banquet", "label": "晚宴", "category": "special" },
+        { "id": "stage", "label": "舞台", "category": "special" },
+        { "id": "spring", "label": "春季", "category": "seasonal" },
+        { "id": "summer", "label": "夏季", "category": "seasonal" },
+        { "id": "autumn", "label": "秋季", "category": "seasonal" },
+        { "id": "winter", "label": "冬季", "category": "seasonal" }
+      ]
+    }
+  },
+  "usage_rules": {
+    "required_dimensions": ["style", "length", "texture", "scene"],
+    "optional_dimensions": ["color", "craft"],
+    "count_rules": {
+      "style": { "min": 1, "max": 2 },
+      "color": { "min": 0, "max": 3 },
+      "length": { "min": 1, "max": 1 },
+      "texture": { "min": 1, "max": 2 },
+      "craft": { "min": 0, "max": 2 },
+      "scene": { "min": 1, "max": 3 }
+    },
+    "priority_order": ["style", "color", "craft", "scene"]
+  }
+}
