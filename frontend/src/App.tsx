@@ -1,7 +1,8 @@
-﻿import HomePage from "./pages/HomePage";
+import RecommendPage from "./pages/RecommendPage";
+import "./style.css";
 
 function App() {
-  return <HomePage />;
+  return <RecommendPage />;
 }
 
 export default App;

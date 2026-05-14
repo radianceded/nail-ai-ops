@@ -5,15 +5,15 @@
 推荐规则直接读取成员 B 的 `data/nail_styles.json` 嵌套结构：
 
 ```python
-style_tags = item["tags"].get("style", [])
-color_tags = item["tags"].get("color", [])
-craft_tags = item["tags"].get("craft", [])
-scene_tags = item["tags"].get("scene", [])
-crowd_tags = item["tags"].get("crowd", [])
+style_values = item["tags"].get("style", [])
+color_values = item["tags"].get("color", [])
+craft_values = item["tags"].get("craft", [])
+scene_values = item["tags"].get("scene", [])
+crowd_values = item["tags"].get("crowd", [])
 image_path = item["image_path"]
 ```
 
-规则实现不要依赖 `style_tags`、`color_tags`、`craft_tags`、`scene_tags`、`crowd_tags` 或 `image_url` 这类旧扁平字段。
+规则实现统一依赖 `tags` 嵌套结构和 `image_path`。
 
 ## 概述
 

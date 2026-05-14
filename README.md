@@ -150,14 +150,17 @@ nail-ai-ops/
 
 ```json
 {
-  "id": "nail_001",
+  "style_id": "nail_001",
   "name": "奶油裸粉法式",
-  "style_tags": ["温柔", "通勤", "简约"],
-  "color_tags": ["裸粉", "低饱和"],
-  "craft_tags": ["法式"],
-  "scene_tags": ["上班", "上课", "日常"],
+  "tags": {
+    "style": ["法式美甲", "韩式美甲"],
+    "color": ["白色", "透明色"],
+    "craft": ["法式"],
+    "scene": ["日常", "通勤"],
+    "crowd": ["学生党", "上班族"]
+  },
   "description": "适合日常通勤和温柔风穿搭的低饱和裸粉法式美甲。",
-  "image_url": "/assets/nail-styles/nail_001.jpg"
+  "image_path": "assets/nail-styles/nail_001.png"
 }
 ```
 

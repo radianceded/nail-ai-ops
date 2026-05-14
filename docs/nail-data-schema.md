@@ -4,7 +4,7 @@
 
 本文档定义美甲AI系统中 `nail_styles.json` 的数据结构和规范，确保前端组件、后端服务和AI算法能够正确使用和扩展数据。
 
-当前项目标准保留成员 B 已完成的嵌套标签结构，不使用 `style_tags`、`color_tags`、`craft_tags`、`scene_tags`、`crowd_tags` 等扁平字段，也不把 `style_id` 改为 `id`，不把 `image_path` 改为 `image_url`。
+当前项目标准保留成员 B 已完成的嵌套标签结构，前端和后端统一读取 `style_id`、`name`、`tags`、`description` 和 `image_path`。
 
 ## 🏗️ 数据架构
 
@@ -138,22 +138,22 @@ backend/
 
 ### 1. NailCard.tsx 组件
 ```tsx
-interface NailCardProps {
+interface NailStyle {
   style_id: string;
-  display_name: string;
-  image_path: string;
-  thumbnail_path?: string;
+  name: string;
   tags: {
     style: string[];
     color: string[];
     craft: string[];
     scene: string[];
     crowd: string[];
-    length?: string[];
-    texture?: string[];
   };
-  popularity: number;
-  difficulty: string;
+  description: string;
+  image_path: string;
+}
+
+interface NailCardProps {
+  nailStyle: NailStyle;
 }
 ```
 
@@ -195,7 +195,7 @@ const sceneTags = item.tags.scene;
 const crowdTags = item.tags.crowd;
 ```
 
-图片路径使用 `assets/nail-styles/nail_001.png` 这类相对路径；不要读取旧字段 `image_url`。
+图片路径使用 `assets/nail-styles/nail_001.png` 这类相对路径。
 
 ## 🔧 后端服务数据需求
 
@@ -221,7 +221,7 @@ class TryOnRequest:
 
 ### 风格标签 (tags.style)
 ```typescript
-const STYLE_TAGS = [
+const STYLE_OPTIONS = [
   "法式美甲",
   "韩式美甲", 
   "日式美甲",
@@ -241,7 +241,7 @@ const STYLE_TAGS = [
 
 ### 颜色标签 (tags.color)
 ```typescript
-const COLOR_TAGS = [
+const COLOR_OPTIONS = [
   "透明色",
   "裸色",
   "粉色系",
@@ -261,7 +261,7 @@ const COLOR_TAGS = [
 
 ### 长度标签 (tags.length)
 ```typescript
-const LENGTH_TAGS = [
+const LENGTH_OPTIONS = [
   "短款",
   "中长款", 
   "长款",
@@ -271,7 +271,7 @@ const LENGTH_TAGS = [
 
 ### 质地标签 (tags.texture)
 ```typescript
-const TEXTURE_TAGS = [
+const TEXTURE_OPTIONS = [
   "亮面",
   "哑光",
   "半哑光",
@@ -287,7 +287,7 @@ const TEXTURE_TAGS = [
 
 ### 工艺标签 (tags.craft)
 ```typescript
-const CRAFT_TAGS = [
+const CRAFT_OPTIONS = [
   "纯色",
   "渐变",
   "法式",
@@ -307,7 +307,7 @@ const CRAFT_TAGS = [
 
 ### 场景标签 (tags.scene)
 ```typescript
-const SCENE_TAGS = [
+const SCENE_OPTIONS = [
   "日常",
   "通勤",
   "约会",
