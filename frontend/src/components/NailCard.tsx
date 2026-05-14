@@ -2,6 +2,7 @@ import type { NailStyle } from "../services/mockData";
 
 interface NailCardProps {
   nailStyle: NailStyle;
+  onTryOn: (nailStyle: NailStyle) => void;
 }
 
 const tagGroups: Array<keyof NailStyle["tags"]> = [
@@ -12,7 +13,7 @@ const tagGroups: Array<keyof NailStyle["tags"]> = [
   "crowd",
 ];
 
-export default function NailCard({ nailStyle }: NailCardProps) {
+export default function NailCard({ nailStyle, onTryOn }: NailCardProps) {
   const tags = tagGroups.flatMap((group) => nailStyle.tags[group] ?? []);
 
   return (
@@ -33,7 +34,11 @@ export default function NailCard({ nailStyle }: NailCardProps) {
           ))}
         </div>
         <p className="nail-card__description">{nailStyle.description}</p>
-        <button className="nail-card__button" type="button">
+        <button
+          className="nail-card__button"
+          type="button"
+          onClick={() => onTryOn(nailStyle)}
+        >
           试戴这款
         </button>
       </div>

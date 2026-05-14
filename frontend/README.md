@@ -40,3 +40,5 @@ npm run dev
 
 默认地址为 `http://localhost:5173`。Vite 配置会在开发环境把仓库根目录的 `assets/` 映射到浏览器的 `/assets/`，因此 mock 数据里的 `/assets/nail-styles/nail_001.png` 可以直接显示。
 
+如果 Windows PowerShell 因执行策略拦截 `npm.ps1`，可改用 `npm.cmd install` 和 `npm.cmd run dev`。
+
