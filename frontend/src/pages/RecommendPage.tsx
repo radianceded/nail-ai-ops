@@ -4,6 +4,7 @@ import { mockNailStyles, type NailStyle } from "../services/mockData";
 
 interface RecommendPageProps {
   onTryOn: (nailStyle: NailStyle) => void;
+  onOpenMerchant: () => void;
 }
 
 function getSearchText(nailStyle: NailStyle) {
@@ -20,8 +21,11 @@ function getSearchText(nailStyle: NailStyle) {
     .toLocaleLowerCase();
 }
 
-export default function RecommendPage({ onTryOn }: RecommendPageProps) {
-  const [keyword, setKeyword] = useState("想要温柔、显白、适合上课的美甲");
+export default function RecommendPage({
+  onTryOn,
+  onOpenMerchant,
+}: RecommendPageProps) {
+  const [keyword, setKeyword] = useState("");
 
   const filteredStyles = useMemo(() => {
     const normalizedKeyword = keyword.trim().toLocaleLowerCase();
@@ -41,9 +45,16 @@ export default function RecommendPage({ onTryOn }: RecommendPageProps) {
         <div>
           <p className="recommend-page__eyebrow">单店美甲 AI 智能运营助手</p>
           <h1>AI 为你推荐的美甲款式</h1>
+          <button
+            className="text-button recommend-page__merchant-link"
+            type="button"
+            onClick={onOpenMerchant}
+          >
+            进入商家端
+          </button>
         </div>
         <label className="recommend-page__input">
-          <span>用户需求</span>
+          <span>搜索心仪款式</span>
           <input
             type="text"
             value={keyword}

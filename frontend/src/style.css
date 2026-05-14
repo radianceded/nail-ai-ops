@@ -15,13 +15,15 @@ input {
 }
 
 .recommend-page,
-.try-on-page {
+.try-on-page,
+.merchant-page {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
   padding: 40px 0;
 }
 
-.recommend-page__header {
+.recommend-page__header,
+.merchant-page__header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
   gap: 24px;
@@ -41,6 +43,10 @@ input {
   margin: 0;
   font-size: 34px;
   line-height: 1.2;
+}
+
+.recommend-page__merchant-link {
+  margin-top: 16px;
 }
 
 .recommend-page__input {
@@ -202,10 +208,128 @@ input {
   padding: 10px 14px;
 }
 
+.merchant-page {
+  display: grid;
+  gap: 20px;
+}
+
+.merchant-page__header {
+  margin-bottom: 0;
+}
+
+.merchant-page h1 {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.2;
+}
+
+.merchant-page__overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metric-card,
+.merchant-panel,
+.copy-grid article {
+  border: 1px solid #e1d7cf;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.metric-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+}
+
+.metric-card span,
+.copy-grid span {
+  color: #6c625d;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.metric-card strong {
+  color: #1f6f68;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.merchant-page__grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.merchant-panel {
+  padding: 18px;
+}
+
+.merchant-panel h2 {
+  margin: 0 0 14px;
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.goal-list {
+  display: grid;
+  gap: 10px;
+}
+
+.goal-button {
+  width: 100%;
+  border: 1px solid #e1d7cf;
+  border-radius: 8px;
+  background: #fbfaf8;
+  color: #4f4540;
+  cursor: pointer;
+  padding: 11px 12px;
+  text-align: left;
+}
+
+.goal-button--active {
+  border-color: #1f6f68;
+  background: #e9f3f1;
+  color: #164f4b;
+  font-weight: 700;
+}
+
+.strategy-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-left: 22px;
+  color: #5c5350;
+  line-height: 1.7;
+}
+
+.copy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.copy-grid article {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+}
+
+.copy-grid p {
+  margin: 0;
+  color: #4f4540;
+  line-height: 1.7;
+}
+
 @media (max-width: 860px) {
   .recommend-page__header,
+  .merchant-page__header,
   .recommend-page__list,
-  .try-on-page__content {
+  .try-on-page__content,
+  .merchant-page__overview,
+  .merchant-page__grid,
+  .copy-grid {
     grid-template-columns: 1fr;
   }
 }
