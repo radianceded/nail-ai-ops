@@ -31,3 +31,12 @@ item.image_path
 - `src/components/NailCard.tsx`：展示图片、名称、标签、描述和“试戴这款”按钮
 - `src/services/mockData.ts`：提供 3 条嵌套格式 mock 数据，后续可替换为真实数据读取
 
+## 本地启动
+
+```bash
+npm install
+npm run dev
+```
+
+默认地址为 `http://localhost:5173`。Vite 配置会在开发环境把仓库根目录的 `assets/` 映射到浏览器的 `/assets/`，因此 mock 数据里的 `/assets/nail-styles/nail_001.png` 可以直接显示。
+
