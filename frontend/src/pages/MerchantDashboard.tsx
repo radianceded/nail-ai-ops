@@ -1,36 +1,52 @@
 import { useMemo, useState } from "react";
-import { mockNailStyles, type NailStyle } from "../services/mockData";
+import {
+  merchantGoals,
+  mockAnalysis,
+  nailStyles,
+  type DistributionItem,
+  type NailStyle,
+} from "../services/projectData";
 
 interface MerchantDashboardProps {
   onBack: () => void;
 }
 
-type GoalKey = "consult" | "newArrival" | "commute" | "student";
+type GoalKey =
+  | "increase_booking_conversion"
+  | "promote_high_margin_styles"
+  | "improve_repeat_purchase"
+  | "student_demo";
 
-const goals: Array<{ key: GoalKey; label: string }> = [
-  { key: "consult", label: "提升到店咨询" },
-  { key: "newArrival", label: "推广新品款式" },
-  { key: "commute", label: "提升通勤款转化" },
-  { key: "student", label: "吸引学生党用户" },
-];
+const goalLabelMap: Record<GoalKey, string> = {
+  increase_booking_conversion: "提升到店咨询 / 预约转化",
+  promote_high_margin_styles: "推广高价值款式",
+  improve_repeat_purchase: "提升复购",
+  // 前端 Demo 扩展目标：成员 B 的 merchant_goals.json 暂未包含学生党场景。
+  student_demo: "吸引学生党用户",
+};
+
+const demoGoalIds: GoalKey[] = [
+  ...merchantGoals.goals,
+  "student_demo",
+] as GoalKey[];
 
 const strategyMap: Record<GoalKey, string[]> = {
-  consult: [
+  increase_booking_conversion: [
     "优先展示温柔、日常、约会标签款式，降低用户第一次咨询的决策成本。",
     "把试戴入口和咨询话术绑定，主推“先看上手效果，再预约到店”。",
     "推荐卡片突出显白、百搭、好维护等低风险卖点。",
   ],
-  newArrival: [
-    "用韩式渐变和酷飒派对款做新品橱窗，形成温柔款与个性款对比。",
-    "新品首周主打限时体验和拍照分享，引导用户收藏并咨询。",
-    "在推荐页保留 1 个高辨识度款式，提高新品记忆点。",
+  promote_high_margin_styles: [
+    "重点展示长款、手绘、贴钻和高难度款式，提升用户对设计价值的感知。",
+    "用艺术风和酷飒款做橱窗主推，形成更强记忆点。",
+    "搭配限时试戴体验，引导用户先收藏再咨询。",
   ],
-  commute: [
-    "重点推法式美甲、透明色、白色和日常通勤场景标签。",
-    "文案强调上班不突兀、显手干净、搭配成本低。",
-    "把短款、低饱和、耐看款作为默认推荐，适合午休或下班到店咨询。",
+  improve_repeat_purchase: [
+    "把日常、通勤、休闲款作为复购主线，强调低维护和百搭。",
+    "针对已做过法式或韩式款的用户，推荐同风格不同颜色的轻变化款。",
+    "用“下一次换款建议”文案提升再次到店的理由。",
   ],
-  student: [
+  student_demo: [
     "优先展示学生党、日常、休闲、约会标签款式。",
     "主推价格友好、上课不夸张、拍照好看的款式表达。",
     "结合示例试戴图做社交分享，引导同学结伴到店。",
@@ -41,28 +57,28 @@ const copyMap: Record<
   GoalKey,
   { xiaohongshu: string; moments: string; poster: string }
 > = {
-  consult: {
+  increase_booking_conversion: {
     xiaohongshu:
       "今天想换一款温柔又不踩雷的美甲，可以先试试 AI 上手效果。显白、百搭、适合日常通勤，到店前就能知道哪款更适合自己。",
     moments:
       "本周主推温柔显白款，支持先看试戴效果再预约，想换美甲的姐妹可以来看看。",
     poster: "AI 先试戴，再到店做同款。",
   },
-  newArrival: {
+  promote_high_margin_styles: {
     xiaohongshu:
-      "新款美甲已上线，韩式渐变和酷飒派对款都很出片。想要温柔还是个性，都可以先看试戴效果再决定。",
+      "想要更有设计感的美甲，可以看看店里的艺术风和手绘款。细节更丰富，上手更出片，适合想换点不一样的姐妹。",
     moments:
-      "店里新款到啦，温柔款和个性款都有，欢迎先试戴效果再预约。",
-    poster: "新品美甲上新，先试戴再选择。",
+      "高设计感款式推荐，手绘、渐变、艺术风都有，欢迎先看试戴效果。",
+    poster: "高价值设计款，美甲也要有记忆点。",
   },
-  commute: {
+  improve_repeat_purchase: {
     xiaohongshu:
-      "通勤美甲不用太夸张，干净、显白、耐看就很加分。法式和透明感款式很适合上班、上课和日常穿搭。",
+      "日常美甲也可以每次有一点新变化。法式、韩式渐变、通勤款都很耐看，适合定期换款保持精致感。",
     moments:
-      "通勤款美甲推荐，低调显白、日常百搭，适合上班族。",
-    poster: "通勤显白款，低调也精致。",
+      "老客换款推荐已更新，日常百搭款和轻设计款都适合复购。",
+    poster: "常做常新，下一款也好看。",
   },
-  student: {
+  student_demo: {
     xiaohongshu:
       "适合学生党的美甲来了，上课不夸张，拍照又好看。温柔渐变、奶油色和轻法式都很适合日常穿搭。",
     moments:
@@ -72,18 +88,53 @@ const copyMap: Record<
 };
 
 function countUnique(styles: NailStyle[], tagName: keyof NailStyle["tags"]) {
-  return new Set(styles.flatMap((style) => style.tags[tagName])).size;
+  return new Set(styles.flatMap((style) => style.tags[tagName] ?? [])).size;
+}
+
+function topEntries(distribution: Record<string, DistributionItem>, limit = 5) {
+  return Object.entries(distribution)
+    .sort(([, left], [, right]) => right.count - left.count)
+    .slice(0, limit);
+}
+
+function DistributionList({
+  title,
+  entries,
+}: {
+  title: string;
+  entries: Array<[string, DistributionItem]>;
+}) {
+  return (
+    <article className="insight-card">
+      <h3>{title}</h3>
+      <div className="distribution-list">
+        {entries.map(([label, item]) => (
+          <div className="distribution-row" key={label}>
+            <span>{label}</span>
+            <div>
+              <i style={{ width: `${Math.min(item.percentage, 100)}%` }} />
+            </div>
+            <strong>
+              {item.count} / {item.percentage}%
+            </strong>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
 }
 
 export default function MerchantDashboard({ onBack }: MerchantDashboardProps) {
-  const [selectedGoal, setSelectedGoal] = useState<GoalKey>("consult");
+  const [selectedGoal, setSelectedGoal] = useState<GoalKey>(
+    "increase_booking_conversion",
+  );
 
   const overview = useMemo(
     () => [
-      { label: "总款式数", value: mockNailStyles.length },
-      { label: "风格标签数量", value: countUnique(mockNailStyles, "style") },
-      { label: "颜色标签数量", value: countUnique(mockNailStyles, "color") },
-      { label: "场景标签数量", value: countUnique(mockNailStyles, "scene") },
+      { label: "总款式数", value: nailStyles.length },
+      { label: "风格标签数量", value: countUnique(nailStyles, "style") },
+      { label: "颜色标签数量", value: countUnique(nailStyles, "color") },
+      { label: "场景标签数量", value: countUnique(nailStyles, "scene") },
     ],
     [],
   );
@@ -111,22 +162,79 @@ export default function MerchantDashboard({ onBack }: MerchantDashboardProps) {
         ))}
       </section>
 
+      <section className="merchant-panel">
+        <h2>款式库数据洞察</h2>
+        <div className="insight-grid">
+          <DistributionList
+            title="风格分布"
+            entries={topEntries(mockAnalysis.style_distribution)}
+          />
+          <DistributionList
+            title="颜色 Top 5"
+            entries={topEntries(mockAnalysis.color_distribution)}
+          />
+          <DistributionList
+            title="场景 Top 5"
+            entries={topEntries(mockAnalysis.scene_distribution)}
+          />
+          <DistributionList
+            title="工艺 Top 5"
+            entries={topEntries(mockAnalysis.craft_distribution)}
+          />
+          <DistributionList
+            title="难度分布"
+            entries={topEntries(mockAnalysis.difficulty_distribution)}
+          />
+          <article className="insight-card">
+            <h3>平均人气</h3>
+            <strong className="large-number">
+              {mockAnalysis.popularity_stats.average}
+            </strong>
+            <p>
+              最高 {mockAnalysis.popularity_stats.max}，最低{" "}
+              {mockAnalysis.popularity_stats.min}
+            </p>
+          </article>
+        </div>
+
+        <div className="analysis-notes">
+          <article>
+            <h3>趋势分析</h3>
+            {Object.entries(mockAnalysis.trend_analysis).map(
+              ([label, values]) => (
+                <p key={label}>
+                  <strong>{label}</strong>：{values.join("、")}
+                </p>
+              ),
+            )}
+          </article>
+          <article>
+            <h3>数据质量提示</h3>
+            <ul>
+              {mockAnalysis.data_quality_notes.warnings.map((warning) => (
+                <li key={warning}>{warning}</li>
+              ))}
+            </ul>
+          </article>
+        </div>
+      </section>
+
       <section className="merchant-page__grid">
         <article className="merchant-panel">
           <h2>运营目标选择</h2>
           <div className="goal-list">
-            {goals.map((goal) => (
+            {demoGoalIds.map((goalId) => (
               <button
                 className={
-                  goal.key === selectedGoal
+                  goalId === selectedGoal
                     ? "goal-button goal-button--active"
                     : "goal-button"
                 }
-                key={goal.key}
+                key={goalId}
                 type="button"
-                onClick={() => setSelectedGoal(goal.key)}
+                onClick={() => setSelectedGoal(goalId)}
               >
-                {goal.label}
+                {goalLabelMap[goalId]}
               </button>
             ))}
           </div>

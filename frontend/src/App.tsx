@@ -2,7 +2,7 @@ import { useState } from "react";
 import MerchantDashboard from "./pages/MerchantDashboard";
 import RecommendPage from "./pages/RecommendPage";
 import TryOnPage from "./pages/TryOnPage";
-import type { NailStyle } from "./services/mockData";
+import type { NailStyle } from "./services/projectData";
 import "./style.css";
 
 type Page = "recommend" | "tryOn" | "merchant";

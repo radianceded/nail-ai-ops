@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { NailStyle } from "../services/mockData";
+import type { NailStyle } from "../services/projectData";
 
 interface TryOnPageProps {
   selectedNail: NailStyle | null;
@@ -32,6 +32,17 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
   }
 
   const tags = tagGroups.flatMap((group) => selectedNail.tags[group] ?? []);
+  const detailItems = [
+    selectedNail.popularity ? ["人气值", selectedNail.popularity] : null,
+    selectedNail.difficulty ? ["难度", selectedNail.difficulty] : null,
+    selectedNail.duration ? ["预计耗时", `${selectedNail.duration} 分钟`] : null,
+    selectedNail.suitable_skin_tones?.length
+      ? ["适合肤色", selectedNail.suitable_skin_tones.join("、")]
+      : null,
+    selectedNail.suitable_hand_types?.length
+      ? ["适合手型", selectedNail.suitable_hand_types.join("、")]
+      : null,
+  ].filter(Boolean) as Array<[string, string | number]>;
 
   return (
     <main className="try-on-page">
@@ -58,6 +69,14 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
           <p className="try-on-page__description">
             {selectedNail.description}
           </p>
+          <dl className="try-on-page__info">
+            {detailItems.map(([label, value]) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
 
           <div className="try-on-page__actions">
             <button className="secondary-button" type="button">
