@@ -8,6 +8,10 @@ import {
   type SceneAdjustment,
 } from "../services/projectData";
 
+type FilterKey = "style" | "color" | "scene" | "craft";
+
+type SelectedFilters = Record<FilterKey, string[]>;
+
 interface RecommendPageProps {
   onTryOn: (nailStyle: NailStyle) => void;
   onOpenMerchant: () => void;
@@ -38,6 +42,47 @@ function getSearchText(nailStyle: NailStyle) {
     .toLocaleLowerCase();
 }
 
+function normalizeText(value: string) {
+  return value.toLocaleLowerCase();
+}
+
+function includesFilterValue(values: Array<string | undefined>, filter: string) {
+  const normalizedFilter = normalizeText(filter);
+
+  return values
+    .filter(Boolean)
+    .some((value) => normalizeText(value as string).includes(normalizedFilter));
+}
+
+function matchesFilterGroup(
+  nailStyle: NailStyle,
+  group: FilterKey,
+  selectedValues: string[],
+) {
+  if (selectedValues.length === 0) {
+    return true;
+  }
+
+  const tags = nailStyle.tags[group] ?? [];
+  const styleField = (nailStyle as NailStyle & { style?: string }).style;
+  const craftField = (nailStyle as NailStyle & { craft?: string }).craft;
+  const fieldsByGroup: Record<FilterKey, Array<string | undefined>> = {
+    style: [
+      ...tags,
+      styleField,
+      nailStyle.display_name,
+      nailStyle.name,
+    ],
+    color: [...tags, nailStyle.color, nailStyle.name, nailStyle.description],
+    scene: [...tags, nailStyle.scene, nailStyle.description],
+    craft: [...tags, craftField, nailStyle.name, nailStyle.description],
+  };
+
+  return selectedValues.some((filter) =>
+    includesFilterValue(fieldsByGroup[group], filter),
+  );
+}
+
 function buildSceneReason(scene: string, adjustment: SceneAdjustment) {
   const parts = [
     ...(adjustment.length_preference ?? []),
@@ -60,35 +105,83 @@ const quickFilterGroups = [
 ].map((group) => ({
   ...group,
   options: tagSystem.dimensions[group.key]?.values.slice(0, 8) ?? [],
-}));
+})) as Array<{
+  key: FilterKey;
+  title: string;
+  options: Array<{ label: string }>;
+}>;
+
+const emptySelectedFilters: SelectedFilters = {
+  style: [],
+  color: [],
+  scene: [],
+  craft: [],
+};
 
 export default function RecommendPage({
   onTryOn,
   onOpenMerchant,
 }: RecommendPageProps) {
   const [keyword, setKeyword] = useState("");
+  const [selectedFilters, setSelectedFilters] =
+    useState<SelectedFilters>(emptySelectedFilters);
+
+  const selectedFilterItems = useMemo(
+    () =>
+      quickFilterGroups.flatMap((group) =>
+        selectedFilters[group.key].map((label) => ({
+          group: group.key,
+          label,
+        })),
+      ),
+    [selectedFilters],
+  );
+
+  const hasSelectedFilters = selectedFilterItems.length > 0;
+
+  const toggleFilter = (group: FilterKey, label: string) => {
+    setSelectedFilters((current) => {
+      const isSelected = current[group].includes(label);
+
+      return {
+        ...current,
+        [group]: isSelected
+          ? current[group].filter((item) => item !== label)
+          : [...current[group], label],
+      };
+    });
+  };
+
+  const removeFilter = (group: FilterKey, label: string) => {
+    setSelectedFilters((current) => ({
+      ...current,
+      [group]: current[group].filter((item) => item !== label),
+    }));
+  };
+
+  const clearFilters = () => {
+    setKeyword("");
+    setSelectedFilters(emptySelectedFilters);
+  };
 
   const filteredStyles = useMemo(() => {
     const normalizedKeyword = keyword.trim().toLocaleLowerCase();
 
-    if (!normalizedKeyword) {
-      return nailStyles;
-    }
+    return nailStyles.filter((style) => {
+      const matchesKeyword =
+        !normalizedKeyword ||
+        getSearchText(style).includes(normalizedKeyword);
+      const matchesSelectedFilters = quickFilterGroups.every((group) =>
+        matchesFilterGroup(style, group.key, selectedFilters[group.key]),
+      );
 
-    return nailStyles.filter((style) =>
-      getSearchText(style).includes(normalizedKeyword),
-    );
-  }, [keyword]);
+      return matchesKeyword && matchesSelectedFilters;
+    });
+  }, [keyword, selectedFilters]);
 
   const sceneReason = useMemo(() => {
-    const normalizedKeyword = keyword.trim();
-
-    if (!normalizedKeyword) {
-      return null;
-    }
-
-    const scene = Object.keys(recommendationRules.scene_adjustments).find(
-      (sceneName) => normalizedKeyword.includes(sceneName),
+    const scene = selectedFilters.scene.find(
+      (sceneName) => recommendationRules.scene_adjustments[sceneName],
     );
 
     if (!scene) {
@@ -99,7 +192,7 @@ export default function RecommendPage({
       scene,
       recommendationRules.scene_adjustments[scene],
     );
-  }, [keyword]);
+  }, [selectedFilters.scene]);
 
   return (
     <main className="recommend-page">
@@ -126,6 +219,29 @@ export default function RecommendPage({
         </label>
       </section>
 
+      {hasSelectedFilters ? (
+        <section className="selected-filters" aria-label="已选择筛选">
+          <div className="selected-filters__chips">
+            <span className="selected-filters__label">已选择：</span>
+            {selectedFilterItems.map((item) => (
+              <button
+                className="selected-filter-chip"
+                key={`${item.group}-${item.label}`}
+                type="button"
+                aria-label={`取消筛选 ${item.label}`}
+                onClick={() => removeFilter(item.group, item.label)}
+              >
+                <span>{item.label}</span>
+                <span aria-hidden="true">×</span>
+              </button>
+            ))}
+          </div>
+          <button className="text-button" type="button" onClick={clearFilters}>
+            清空
+          </button>
+        </section>
+      ) : null}
+
       <section className="quick-filters" aria-label="快捷筛选标签">
         {quickFilterGroups.map((group) => (
           <div className="quick-filters__group" key={group.key}>
@@ -133,10 +249,17 @@ export default function RecommendPage({
             <div>
               {group.options.map((option) => (
                 <button
-                  className="quick-filter-button"
+                  className={
+                    selectedFilters[group.key].includes(option.label)
+                      ? "quick-filter-button quick-filter-button--active"
+                      : "quick-filter-button"
+                  }
                   key={option.label}
                   type="button"
-                  onClick={() => setKeyword(option.label)}
+                  aria-pressed={selectedFilters[group.key].includes(
+                    option.label,
+                  )}
+                  onClick={() => toggleFilter(group.key, option.label)}
                 >
                   {option.label}
                 </button>

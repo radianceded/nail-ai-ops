@@ -193,6 +193,60 @@ input {
   font-size: 12px;
 }
 
+.quick-filter-button:hover,
+.quick-filter-button--active {
+  border-color: #1f6f68;
+  background: #e9f3f1;
+  color: #164f4b;
+}
+
+.quick-filter-button--active {
+  font-weight: 700;
+}
+
+.selected-filters {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin: -6px 0 12px;
+  color: #5c5350;
+  font-size: 14px;
+}
+
+.selected-filters__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.selected-filters__label {
+  color: #6c625d;
+  font-weight: 700;
+  line-height: 28px;
+}
+
+.selected-filter-chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid #1f6f68;
+  border-radius: 999px;
+  background: #e9f3f1;
+  color: #164f4b;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.selected-filter-chip:hover {
+  background: #dcecea;
+}
+
 .recommend-page__reason {
   border-left: 4px solid #1f6f68;
   border-radius: 8px;
