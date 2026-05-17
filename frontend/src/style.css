@@ -362,6 +362,76 @@ input {
   gap: 12px;
 }
 
+.try-on-page__file-input {
+  display: none;
+}
+
+.try-on-page__hand-preview {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #e1d7cf;
+  border-radius: 8px;
+  background: #fff;
+  padding: 14px;
+}
+
+.try-on-page__hand-preview div {
+  display: grid;
+  gap: 4px;
+}
+
+.try-on-page__hand-preview span,
+.try-on-page__result figcaption {
+  color: #6c625d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.try-on-page__hand-preview strong {
+  color: #26211f;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.try-on-page__hand-preview img {
+  width: 100%;
+  max-height: 280px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #ece5df;
+}
+
+.try-on-page__result {
+  display: grid;
+  gap: 14px;
+}
+
+.try-on-page__result-images {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.try-on-page__result figure {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.try-on-page__result img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #ece5df;
+}
+
+.try-on-page__result p {
+  margin: 0;
+  color: #4f4540;
+  line-height: 1.7;
+}
+
 .secondary-button {
   border: 1px solid #c9b8ac;
   border-radius: 8px;
@@ -603,6 +673,7 @@ input {
   .recommend-page__list,
   .try-on-page__content,
   .try-on-page__info,
+  .try-on-page__result-images,
   .merchant-page__overview,
   .merchant-page__grid,
   .copy-grid,

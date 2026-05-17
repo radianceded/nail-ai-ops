@@ -6,6 +6,7 @@ import {
   type DistributionItem,
   type NailStyle,
 } from "../services/projectData";
+import { generateCopy, type GeneratedCopy } from "../services/api";
 
 interface MerchantDashboardProps {
   onBack: () => void;
@@ -55,7 +56,7 @@ const strategyMap: Record<GoalKey, string[]> = {
 
 const copyMap: Record<
   GoalKey,
-  { xiaohongshu: string; moments: string; poster: string }
+  GeneratedCopy
 > = {
   increase_booking_conversion: {
     xiaohongshu:
@@ -128,6 +129,11 @@ export default function MerchantDashboard({ onBack }: MerchantDashboardProps) {
   const [selectedGoal, setSelectedGoal] = useState<GoalKey>(
     "increase_booking_conversion",
   );
+  const [generatedCopy, setGeneratedCopy] = useState<GeneratedCopy>(
+    copyMap.increase_booking_conversion,
+  );
+  const [isGeneratingCopy, setIsGeneratingCopy] = useState(false);
+  const [copyError, setCopyError] = useState("");
 
   const overview = useMemo(
     () => [
@@ -139,7 +145,27 @@ export default function MerchantDashboard({ onBack }: MerchantDashboardProps) {
     [],
   );
 
-  const copy = copyMap[selectedGoal];
+  const handleGoalSelect = (goalId: GoalKey) => {
+    setSelectedGoal(goalId);
+    setGeneratedCopy(copyMap[goalId]);
+    setCopyError("");
+  };
+
+  const handleGenerateCopy = async () => {
+    setIsGeneratingCopy(true);
+    setCopyError("");
+
+    try {
+      const nextCopy = await generateCopy(selectedGoal);
+      setGeneratedCopy(nextCopy);
+    } catch (error) {
+      console.error(error);
+      setGeneratedCopy(copyMap[selectedGoal]);
+      setCopyError("后端暂不可用，已使用本地 mock 文案。");
+    } finally {
+      setIsGeneratingCopy(false);
+    }
+  };
 
   return (
     <main className="merchant-page">
@@ -232,7 +258,7 @@ export default function MerchantDashboard({ onBack }: MerchantDashboardProps) {
                 }
                 key={goalId}
                 type="button"
-                onClick={() => setSelectedGoal(goalId)}
+                onClick={() => handleGoalSelect(goalId)}
               >
                 {goalLabelMap[goalId]}
               </button>
@@ -251,19 +277,32 @@ export default function MerchantDashboard({ onBack }: MerchantDashboardProps) {
       </section>
 
       <section className="merchant-panel">
-        <h2>AI 宣传文案 mock</h2>
+        <div className="merchant-panel__title-row">
+          <h2>AI 宣传文案</h2>
+          <button
+            className="nail-card__button"
+            type="button"
+            onClick={handleGenerateCopy}
+            disabled={isGeneratingCopy}
+          >
+            {isGeneratingCopy ? "AI 文案生成中..." : "生成运营文案"}
+          </button>
+        </div>
+        {copyError ? (
+          <p className="copy-status copy-status--error">{copyError}</p>
+        ) : null}
         <div className="copy-grid">
           <article>
             <span>小红书风格文案</span>
-            <p>{copy.xiaohongshu}</p>
+            <p>{generatedCopy.xiaohongshu}</p>
           </article>
           <article>
             <span>朋友圈风格文案</span>
-            <p>{copy.moments}</p>
+            <p>{generatedCopy.moments}</p>
           </article>
           <article>
             <span>门店海报短文案</span>
-            <p>{copy.poster}</p>
+            <p>{generatedCopy.poster}</p>
           </article>
         </div>
       </section>

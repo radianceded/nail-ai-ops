@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import type { NailStyle } from "../services/projectData";
 
 interface TryOnPageProps {
@@ -14,8 +14,35 @@ const tagGroups: Array<keyof NailStyle["tags"]> = [
   "crowd",
 ];
 
+interface HandImagePreview {
+  source: "upload" | "example";
+  url: string;
+  label: string;
+}
+
 export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const generationTimerRef = useRef<number | null>(null);
+  const [handImagePreview, setHandImagePreview] =
+    useState<HandImagePreview | null>(null);
+  const [isGeneratingResult, setIsGeneratingResult] = useState(false);
   const [showMockResult, setShowMockResult] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (handImagePreview?.source === "upload") {
+        URL.revokeObjectURL(handImagePreview.url);
+      }
+    };
+  }, [handImagePreview]);
+
+  useEffect(() => {
+    return () => {
+      if (generationTimerRef.current) {
+        window.clearTimeout(generationTimerRef.current);
+      }
+    };
+  }, []);
 
   if (!selectedNail) {
     return (
@@ -43,6 +70,69 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
       ? ["适合手型", selectedNail.suitable_hand_types.join("、")]
       : null,
   ].filter(Boolean) as Array<[string, string | number]>;
+
+  const handleUploadButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleHandImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setHandImagePreview({
+      source: "upload",
+      url: URL.createObjectURL(file),
+      label: file.name,
+    });
+    setShowMockResult(false);
+    setIsGeneratingResult(false);
+  };
+
+  const handleUseExampleHandImage = () => {
+    // Demo placeholder: no dedicated hand image exists yet, so reuse the selected nail image as the local mock preview.
+    setHandImagePreview({
+      source: "example",
+      url: selectedNail.image_path,
+      label: "示例手图（demo placeholder）",
+    });
+    setShowMockResult(false);
+    setIsGeneratingResult(false);
+  };
+
+  const handleGenerateResult = () => {
+    if (!handImagePreview || isGeneratingResult) {
+      return;
+    }
+
+    setIsGeneratingResult(true);
+    setShowMockResult(false);
+
+    if (generationTimerRef.current) {
+      window.clearTimeout(generationTimerRef.current);
+    }
+
+    generationTimerRef.current = window.setTimeout(() => {
+      setIsGeneratingResult(false);
+      setShowMockResult(true);
+    }, 1000);
+  };
+
+  const handleResetHandImage = () => {
+    if (generationTimerRef.current) {
+      window.clearTimeout(generationTimerRef.current);
+    }
+
+    setHandImagePreview(null);
+    setShowMockResult(false);
+    setIsGeneratingResult(false);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   return (
     <main className="try-on-page">
@@ -79,22 +169,77 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
           </dl>
 
           <div className="try-on-page__actions">
-            <button className="secondary-button" type="button">
+            <input
+              ref={fileInputRef}
+              className="try-on-page__file-input"
+              type="file"
+              accept="image/*"
+              onChange={handleHandImageChange}
+            />
+            <button
+              className="secondary-button"
+              type="button"
+              onClick={handleUploadButtonClick}
+            >
               上传我的手图
             </button>
             <button
               className="nail-card__button"
               type="button"
-              onClick={() => setShowMockResult(true)}
+              onClick={handleUseExampleHandImage}
             >
               使用示例手图
             </button>
+            <button
+              className="nail-card__button"
+              type="button"
+              onClick={handleGenerateResult}
+              disabled={!handImagePreview || isGeneratingResult}
+            >
+              {isGeneratingResult ? "AI 试戴结果生成中..." : "生成试戴结果"}
+            </button>
+            {handImagePreview ? (
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={handleResetHandImage}
+              >
+                重新选择手图
+              </button>
+            ) : null}
           </div>
 
+          {handImagePreview ? (
+            <section className="try-on-page__hand-preview">
+              <div>
+                <span>手图预览</span>
+                <strong>{handImagePreview.label}</strong>
+              </div>
+              <img src={handImagePreview.url} alt={handImagePreview.label} />
+            </section>
+          ) : null}
+
           {showMockResult ? (
-            <div className="try-on-page__result">
-              试戴结果生成中 / Mock 展示：当前阶段暂未接入真实 AI 图像生成
-            </div>
+            <section className="try-on-page__result">
+              <div className="try-on-page__result-images">
+                <figure>
+                  <img src={selectedNail.image_path} alt={selectedNail.name} />
+                  <figcaption>选中的美甲款式</figcaption>
+                </figure>
+                {handImagePreview ? (
+                  <figure>
+                    <img
+                      src={handImagePreview.url}
+                      alt={handImagePreview.label}
+                    />
+                    <figcaption>手图预览</figcaption>
+                  </figure>
+                ) : null}
+              </div>
+              <p>
+                当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。
+              </p>
+            </section>
           ) : null}
         </div>
       </section>
