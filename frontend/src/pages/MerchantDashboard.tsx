@@ -6,7 +6,11 @@ import {
   type DistributionItem,
   type NailStyle,
 } from "../services/projectData";
-import { generateCopy, type GeneratedCopy } from "../services/api";
+import {
+  generateCopy,
+  type GeneratedCopy,
+  type GenerateCopyResponse,
+} from "../services/api";
 
 interface MerchantDashboardProps {
   onBack: () => void;
@@ -65,30 +69,49 @@ const copyMap: Record<
       "今天想换一款温柔又不踩雷的美甲，可以先试试 AI 上手效果。显白、百搭、适合日常通勤，到店前就能知道哪款更适合自己。",
     moments:
       "本周主推温柔显白款，支持先看试戴效果再预约，想换美甲的姐妹可以来看看。",
-    poster: "AI 先试戴，再到店做同款。",
+    meituan: "AI 先试戴，再到店做同款。",
   },
   promote_high_margin_styles: {
     xiaohongshu:
       "想要更有设计感的美甲，可以看看店里的艺术风和手绘款。细节更丰富，上手更出片，适合想换点不一样的姐妹。",
     moments:
       "高设计感款式推荐，手绘、渐变、艺术风都有，欢迎先看试戴效果。",
-    poster: "高价值设计款，美甲也要有记忆点。",
+    meituan: "高价值设计款，美甲也要有记忆点。",
   },
   improve_repeat_purchase: {
     xiaohongshu:
       "日常美甲也可以每次有一点新变化。法式、韩式渐变、通勤款都很耐看，适合定期换款保持精致感。",
     moments:
       "老客换款推荐已更新，日常百搭款和轻设计款都适合复购。",
-    poster: "常做常新，下一款也好看。",
+    meituan: "常做常新，下一款也好看。",
   },
   student_demo: {
     xiaohongshu:
       "适合学生党的美甲来了，上课不夸张，拍照又好看。温柔渐变、奶油色和轻法式都很适合日常穿搭。",
     moments:
       "学生党友好款上线，清爽温柔不夸张，适合上课和周末出门。",
-    poster: "学生党美甲，清爽好看不夸张。",
+    meituan: "学生党美甲，清爽好看不夸张。",
   },
 };
+
+function buildLocalGeneratedCopy(goal: GoalKey): GenerateCopyResponse {
+  return {
+    source: "mock",
+    strategy_summary: "建议围绕当前运营目标，主推显白、日常、接受度高的款式，降低用户决策成本。",
+    main_recommendations: [
+      {
+        style_name: nailStyles[0]?.name ?? "主推款式",
+        reason: "款式标签覆盖日常、显白和通勤场景，适合做门店主推。",
+      },
+    ],
+    copywriting: copyMap[goal],
+    operation_tips: [
+      "建议放在首页主推位。",
+      "搭配试戴入口提升咨询转化。",
+      "图片展示时突出自然光下的干净显白效果。",
+    ],
+  };
+}
 
 function countUnique(styles: NailStyle[], tagName: keyof NailStyle["tags"]) {
   return new Set(styles.flatMap((style) => style.tags[tagName] ?? [])).size;
@@ -135,8 +158,8 @@ export default function MerchantDashboard({
   const [selectedGoal, setSelectedGoal] = useState<GoalKey>(
     "increase_booking_conversion",
   );
-  const [generatedCopy, setGeneratedCopy] = useState<GeneratedCopy>(
-    copyMap.increase_booking_conversion,
+  const [generatedCopy, setGeneratedCopy] = useState<GenerateCopyResponse>(
+    buildLocalGeneratedCopy("increase_booking_conversion"),
   );
   const [isGeneratingCopy, setIsGeneratingCopy] = useState(false);
   const [copyError, setCopyError] = useState("");
@@ -153,7 +176,7 @@ export default function MerchantDashboard({
 
   const handleGoalSelect = (goalId: GoalKey) => {
     setSelectedGoal(goalId);
-    setGeneratedCopy(copyMap[goalId]);
+    setGeneratedCopy(buildLocalGeneratedCopy(goalId));
     setCopyError("");
   };
 
@@ -162,11 +185,22 @@ export default function MerchantDashboard({
     setCopyError("");
 
     try {
-      const nextCopy = await generateCopy(selectedGoal);
+      const selectedStyles = nailStyles.slice(0, 3).map((style) => ({
+        name: style.name,
+        category: style.tags.style[0] ?? style.name,
+        color: style.color ?? style.tags.color[0],
+        tags: [
+          ...style.tags.style,
+          ...style.tags.color,
+          ...style.tags.scene,
+          ...style.tags.craft,
+        ].slice(0, 8),
+      }));
+      const nextCopy = await generateCopy(selectedGoal, selectedStyles);
       setGeneratedCopy(nextCopy);
     } catch (error) {
       console.error(error);
-      setGeneratedCopy(copyMap[selectedGoal]);
+      setGeneratedCopy(buildLocalGeneratedCopy(selectedGoal));
       setCopyError("后端暂不可用，已使用本地 mock 文案。");
     } finally {
       setIsGeneratingCopy(false);
@@ -305,20 +339,43 @@ export default function MerchantDashboard({
         {copyError ? (
           <p className="copy-status copy-status--error">{copyError}</p>
         ) : null}
+        <div className="ai-source-badge">
+          {generatedCopy.source === "llm" ? "由 AI 实时生成" : "使用本地示例生成"}
+        </div>
+        <article className="insight-card merchant-ai-summary">
+          <h3>运营策略总结</h3>
+          <p>{generatedCopy.strategy_summary}</p>
+        </article>
+        <div className="copy-grid merchant-recommendation-grid">
+          {generatedCopy.main_recommendations.map((item, index) => (
+            <article key={`${item.style_name}-${index}`}>
+              <span>{item.style_name || "主推款式"}</span>
+              <p>{item.reason || "适合当前运营目标。"}</p>
+            </article>
+          ))}
+        </div>
         <div className="copy-grid">
           <article>
             <span>小红书风格文案</span>
-            <p>{generatedCopy.xiaohongshu}</p>
+            <p>{generatedCopy.copywriting.xiaohongshu}</p>
+          </article>
+          <article>
+            <span>美团平台文案</span>
+            <p>{generatedCopy.copywriting.meituan}</p>
           </article>
           <article>
             <span>朋友圈风格文案</span>
-            <p>{generatedCopy.moments}</p>
-          </article>
-          <article>
-            <span>门店海报短文案</span>
-            <p>{generatedCopy.poster}</p>
+            <p>{generatedCopy.copywriting.moments}</p>
           </article>
         </div>
+        <article className="insight-card merchant-ai-summary">
+          <h3>运营建议</h3>
+          <ul className="strategy-list">
+            {generatedCopy.operation_tips.map((tip) => (
+              <li key={tip}>{tip}</li>
+            ))}
+          </ul>
+        </article>
       </section>
     </main>
   );

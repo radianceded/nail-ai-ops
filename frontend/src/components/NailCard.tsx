@@ -3,6 +3,8 @@ import type { NailStyle } from "../services/projectData";
 interface NailCardProps {
   nailStyle: NailStyle;
   onTryOn: (nailStyle: NailStyle) => void;
+  matchScore?: number;
+  matchReason?: string;
 }
 
 const tagGroups: Array<keyof NailStyle["tags"]> = [
@@ -23,7 +25,12 @@ function getMetaItems(nailStyle: NailStyle) {
   ].filter(Boolean);
 }
 
-export default function NailCard({ nailStyle, onTryOn }: NailCardProps) {
+export default function NailCard({
+  nailStyle,
+  onTryOn,
+  matchScore,
+  matchReason,
+}: NailCardProps) {
   const tags = tagGroups.flatMap((group) => nailStyle.tags[group] ?? []);
   const metaItems = getMetaItems(nailStyle);
 
@@ -49,6 +56,12 @@ export default function NailCard({ nailStyle, onTryOn }: NailCardProps) {
             <span key={item}>{item}</span>
           ))}
         </div>
+        {typeof matchScore === "number" ? (
+          <div className="nail-card__match">
+            <strong>匹配度 {matchScore}%</strong>
+            {matchReason ? <span>{matchReason}</span> : null}
+          </div>
+        ) : null}
         <p className="nail-card__description">{nailStyle.description}</p>
         <button
           className="nail-card__button"

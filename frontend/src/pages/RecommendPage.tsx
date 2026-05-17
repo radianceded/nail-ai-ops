@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import NailCard from "../components/NailCard";
-import { fetchStyles } from "../services/api";
+import { fetchStyles, parsePreference, type ParsedPreference } from "../services/api";
 import {
   nailStyles,
   recommendationRules,
@@ -84,6 +84,114 @@ function matchesFilterGroup(
   );
 }
 
+function getAiTerms(preference: ParsedPreference | null) {
+  if (!preference || preference.is_relevant === false) {
+    return [];
+  }
+
+  return [
+    ...preference.filters.categories,
+    ...preference.filters.colors,
+    ...preference.filters.scenes,
+    ...preference.filters.styles,
+    ...preference.keywords,
+  ].filter(Boolean);
+}
+
+function getStyleTerms(nailStyle: NailStyle) {
+  return [
+    nailStyle.name,
+    nailStyle.display_name,
+    nailStyle.description,
+    nailStyle.color,
+    nailStyle.scene,
+    ...nailStyle.tags.style,
+    ...nailStyle.tags.color,
+    ...nailStyle.tags.craft,
+    ...nailStyle.tags.scene,
+    ...nailStyle.tags.crowd,
+  ].filter(Boolean) as string[];
+}
+
+const semanticGroups = [
+  {
+    triggers: ["上学", "学生", "校园", "清新", "清爽", "自然", "低调", "不夸张", "简约"],
+    targets: ["日常", "通勤", "极简风", "纯色", "透明色", "裸色", "粉色系"],
+  },
+  {
+    triggers: ["甜美", "温柔", "少女", "约会"],
+    targets: ["粉色系", "韩式美甲", "约会", "裸色", "渐变"],
+  },
+  {
+    triggers: ["高级", "气质", "冷淡", "清冷"],
+    targets: ["法式美甲", "极简风", "裸色", "透明色", "法式"],
+  },
+  {
+    triggers: ["拍照", "出片", "氛围感", "聚会"],
+    targets: ["约会", "派对", "艺术风", "韩式美甲", "手绘"],
+  },
+  {
+    triggers: ["显白"],
+    targets: ["裸色", "粉色系", "红色系", "透明色"],
+  },
+];
+
+function getSemanticTargets(terms: string[]) {
+  const joinedTerms = terms.join(" ");
+  const targets = semanticGroups.flatMap((group) =>
+    group.triggers.some((trigger) => joinedTerms.includes(trigger))
+      ? group.targets
+      : [],
+  );
+
+  return Array.from(new Set(targets));
+}
+
+function getMatchInfo(nailStyle: NailStyle, preference: ParsedPreference | null) {
+  const terms = getAiTerms(preference);
+
+  if (terms.length === 0) {
+    return null;
+  }
+
+  const searchText = getSearchText(nailStyle);
+  const exactMatches = terms.filter((term) =>
+    searchText.includes(normalizeText(term)),
+  );
+  const directTagMatches = getStyleTerms(nailStyle).filter((term) =>
+    terms.some((target) => normalizeText(term).includes(normalizeText(target))),
+  );
+  const semanticTargets = getSemanticTargets(terms);
+  const semanticMatches = semanticTargets.filter((term) =>
+    searchText.includes(normalizeText(term)),
+  );
+  const uniqueExactMatches = Array.from(new Set([...exactMatches, ...directTagMatches]));
+  const uniqueSemanticMatches = Array.from(new Set(semanticMatches));
+
+  if (uniqueExactMatches.length === 0 && uniqueSemanticMatches.length === 0) {
+    return null;
+  }
+
+  const score =
+    uniqueExactMatches.length > 0
+      ? Math.min(98, 72 + uniqueExactMatches.length * 7 + uniqueSemanticMatches.length * 3)
+      : Math.min(85, 60 + uniqueSemanticMatches.length * 7);
+  const reasonTerms =
+    uniqueExactMatches.length > 0
+      ? uniqueExactMatches
+      : uniqueSemanticMatches;
+
+  return {
+    score,
+    exactCount: uniqueExactMatches.length,
+    semanticCount: uniqueSemanticMatches.length,
+    reason:
+      uniqueExactMatches.length > 0
+        ? `命中 ${reasonTerms.slice(0, 4).join("、")}`
+        : `虽然不是完全匹配，但这款在 ${reasonTerms.slice(0, 3).join("、")} 上与需求接近`,
+  };
+}
+
 function buildSceneReason(scene: string, adjustment: SceneAdjustment) {
   const parts = [
     ...(adjustment.length_preference ?? []),
@@ -124,6 +232,11 @@ export default function RecommendPage({
   onOpenMerchant,
 }: RecommendPageProps) {
   const [keyword, setKeyword] = useState("");
+  const [preferenceText, setPreferenceText] = useState("");
+  const [parsedPreference, setParsedPreference] =
+    useState<ParsedPreference | null>(null);
+  const [isParsingPreference, setIsParsingPreference] = useState(false);
+  const [preferenceError, setPreferenceError] = useState("");
   const [styles, setStyles] = useState<NailStyle[]>(nailStyles);
   const [isLoadingStyles, setIsLoadingStyles] = useState(true);
   const [isUsingLocalStyles, setIsUsingLocalStyles] = useState(false);
@@ -198,23 +311,82 @@ export default function RecommendPage({
 
   const clearFilters = () => {
     setKeyword("");
+    setParsedPreference(null);
+    setPreferenceError("");
     setSelectedFilters(emptySelectedFilters);
   };
 
-  const filteredStyles = useMemo(() => {
-    const normalizedKeyword = keyword.trim().toLocaleLowerCase();
+  const handleParsePreference = async () => {
+    const text = preferenceText.trim();
 
-    return styles.filter((style) => {
+    if (!text) {
+      setPreferenceError("请输入一句美甲需求。");
+      return;
+    }
+
+    setIsParsingPreference(true);
+    setPreferenceError("");
+
+    try {
+      const result = await parsePreference(text);
+      setParsedPreference(result);
+      setKeyword("");
+    } catch (error) {
+      console.error(error);
+      setPreferenceError("AI 需求理解暂不可用，请直接使用搜索和筛选。");
+    } finally {
+      setIsParsingPreference(false);
+    }
+  };
+
+  const { rankedStyles, isRelaxedMatching } = useMemo(() => {
+    const normalizedKeyword = keyword.trim().toLocaleLowerCase();
+    if (parsedPreference?.is_relevant === false) {
+      return { rankedStyles: [], isRelaxedMatching: false };
+    }
+
+    const baseStyles = styles.filter((style) => {
       const matchesKeyword =
-        !normalizedKeyword ||
-        getSearchText(style).includes(normalizedKeyword);
+        !normalizedKeyword || getSearchText(style).includes(normalizedKeyword);
       const matchesSelectedFilters = quickFilterGroups.every((group) =>
         matchesFilterGroup(style, group.key, selectedFilters[group.key]),
       );
 
       return matchesKeyword && matchesSelectedFilters;
     });
-  }, [keyword, selectedFilters, styles]);
+
+    if (!parsedPreference) {
+      return {
+        rankedStyles: baseStyles.map((style) => ({ style, matchInfo: null })),
+        isRelaxedMatching: false,
+      };
+    }
+
+    const scoredStyles = baseStyles
+      .map((style) => ({
+        style,
+        matchInfo: getMatchInfo(style, parsedPreference),
+      }))
+      .filter((item) => item.matchInfo)
+      .sort((left, right) => {
+        const leftScore = left.matchInfo?.score ?? 0;
+        const rightScore = right.matchInfo?.score ?? 0;
+        return rightScore - leftScore;
+      });
+
+    const strictStyles = scoredStyles.filter(
+      (item) => (item.matchInfo?.exactCount ?? 0) > 0,
+    );
+
+    if (strictStyles.length > 0) {
+      return { rankedStyles: strictStyles, isRelaxedMatching: false };
+    }
+
+    return {
+      rankedStyles: scoredStyles.slice(0, 6),
+      isRelaxedMatching: scoredStyles.length > 0,
+    };
+  }, [keyword, selectedFilters, styles, parsedPreference]);
 
   const sceneReason = useMemo(() => {
     const scene = selectedFilters.scene.find(
@@ -254,6 +426,50 @@ export default function RecommendPage({
             placeholder="输入风格、颜色、场景或人群关键词"
           />
         </label>
+      </section>
+
+      <section className="ai-preference-panel">
+        <div>
+          <h2>AI 需求理解</h2>
+          <p>输入一句自然语言需求，AI 会提取场景、颜色和风格偏好。</p>
+        </div>
+        <div className="ai-preference-panel__form">
+          <input
+            type="text"
+            value={preferenceText}
+            onChange={(event) => setPreferenceText(event.target.value)}
+            placeholder="例如：我想要适合通勤、显白、不要太夸张的美甲"
+          />
+          <button
+            className="nail-card__button"
+            type="button"
+            onClick={handleParsePreference}
+            disabled={isParsingPreference}
+          >
+            {isParsingPreference ? "AI 理解中..." : "让 AI 理解需求"}
+          </button>
+        </div>
+        {preferenceError ? (
+          <p className="copy-status copy-status--error">{preferenceError}</p>
+        ) : null}
+        {parsedPreference ? (
+          <div className="ai-preference-result">
+            <span>
+              {parsedPreference.source === "llm"
+                ? "由 AI 实时理解"
+                : "使用本地规则理解"}
+            </span>
+            <strong>{parsedPreference.summary}</strong>
+            <p>{parsedPreference.reason}</p>
+            {parsedPreference.keywords.length > 0 ? (
+              <div className="nail-card__tags">
+                {parsedPreference.keywords.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </section>
 
       {hasSelectedFilters ? (
@@ -318,17 +534,33 @@ export default function RecommendPage({
         <p className="recommend-page__status">当前使用本地数据展示。</p>
       ) : null}
 
-      <div className="recommend-page__result-bar">
-        <span>共匹配 {filteredStyles.length} 款</span>
-      </div>
+      {parsedPreference?.is_relevant === false ? (
+        <section className="recommend-page__empty recommend-page__irrelevant">
+          <p>
+            这条内容不像美甲需求，可以试试输入颜色、风格或使用场景，例如：通勤、显白、粉色系。
+          </p>
+        </section>
+      ) : (
+        <div className="recommend-page__result-bar">
+          <span>共匹配 {rankedStyles.length} 款</span>
+        </div>
+      )}
 
-      {filteredStyles.length > 0 ? (
+      {parsedPreference?.is_relevant !== false && isRelaxedMatching ? (
+        <p className="recommend-page__status">
+          当前没有完全匹配的款式，AI 已自动放宽条件，推荐最接近的款式。
+        </p>
+      ) : null}
+
+      {parsedPreference?.is_relevant === false ? null : rankedStyles.length > 0 ? (
         <section className="recommend-page__list" aria-label="推荐款式列表">
-          {filteredStyles.map((style) => (
+          {rankedStyles.map(({ style, matchInfo }) => (
             <NailCard
               key={style.style_id}
               nailStyle={style}
               onTryOn={onTryOn}
+              matchScore={matchInfo?.score}
+              matchReason={matchInfo?.reason}
             />
           ))}
         </section>

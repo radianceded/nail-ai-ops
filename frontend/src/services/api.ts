@@ -5,12 +5,20 @@ const API_BASE_URL = "http://127.0.0.1:8000";
 export interface GeneratedCopy {
   xiaohongshu: string;
   moments: string;
-  poster: string;
+  meituan: string;
 }
 
-interface GenerateCopyResponse {
-  goal: string;
-  copy: GeneratedCopy;
+export interface GeneratedRecommendation {
+  style_name: string;
+  reason: string;
+}
+
+export interface GenerateCopyResponse {
+  source: "llm" | "mock";
+  strategy_summary: string;
+  main_recommendations: GeneratedRecommendation[];
+  copywriting: GeneratedCopy;
+  operation_tips: string[];
 }
 
 interface FetchStylesResponse {
@@ -26,25 +34,69 @@ export interface TryOnResponse {
   result_image_url: string | null;
 }
 
+export interface PreferenceFilters {
+  categories: string[];
+  colors: string[];
+  scenes: string[];
+  styles: string[];
+}
+
+export interface ParsedPreference {
+  source: "llm" | "mock";
+  is_relevant: boolean;
+  intent_type: "nail_preference" | "irrelevant" | "prompt_injection";
+  original_text: string;
+  summary: string;
+  filters: PreferenceFilters;
+  keywords: string[];
+  reason: string;
+}
+
 function toFrontendAssetPath(path: string) {
   return path.startsWith("/") ? path : `/${path}`;
 }
 
-export async function generateCopy(goal: string): Promise<GeneratedCopy> {
+export async function parsePreference(text: string): Promise<ParsedPreference> {
+  const response = await fetch(`${API_BASE_URL}/api/parse-preference`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ text }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Parse preference failed: ${response.status}`);
+  }
+
+  return (await response.json()) as ParsedPreference;
+}
+
+export async function generateCopy(
+  goal: string,
+  selectedStyles: Array<Record<string, unknown>> = [],
+): Promise<GenerateCopyResponse> {
   const response = await fetch(`${API_BASE_URL}/api/generate-copy`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ goal }),
+    body: JSON.stringify({
+      goal,
+      selected_styles: selectedStyles,
+      store_context: {
+        store_name: "示例美甲店",
+        target_users: "年轻女性、学生、白领",
+        platform: "小红书/朋友圈/美团",
+      },
+    }),
   });
 
   if (!response.ok) {
     throw new Error(`Generate copy failed: ${response.status}`);
   }
 
-  const data = (await response.json()) as GenerateCopyResponse;
-  return data.copy;
+  return (await response.json()) as GenerateCopyResponse;
 }
 
 export async function fetchStyles(): Promise<NailStyle[]> {
