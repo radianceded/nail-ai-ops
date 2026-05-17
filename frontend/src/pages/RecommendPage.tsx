@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NailCard from "../components/NailCard";
+import { fetchStyles } from "../services/api";
 import {
   nailStyles,
   recommendationRules,
@@ -123,8 +124,44 @@ export default function RecommendPage({
   onOpenMerchant,
 }: RecommendPageProps) {
   const [keyword, setKeyword] = useState("");
+  const [styles, setStyles] = useState<NailStyle[]>(nailStyles);
+  const [isLoadingStyles, setIsLoadingStyles] = useState(true);
+  const [isUsingLocalStyles, setIsUsingLocalStyles] = useState(false);
   const [selectedFilters, setSelectedFilters] =
     useState<SelectedFilters>(emptySelectedFilters);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetchStyles()
+      .then((backendStyles) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setStyles(backendStyles);
+        setIsUsingLocalStyles(false);
+      })
+      .catch((error) => {
+        console.error(error);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setStyles(nailStyles);
+        setIsUsingLocalStyles(true);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoadingStyles(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const selectedFilterItems = useMemo(
     () =>
@@ -167,7 +204,7 @@ export default function RecommendPage({
   const filteredStyles = useMemo(() => {
     const normalizedKeyword = keyword.trim().toLocaleLowerCase();
 
-    return nailStyles.filter((style) => {
+    return styles.filter((style) => {
       const matchesKeyword =
         !normalizedKeyword ||
         getSearchText(style).includes(normalizedKeyword);
@@ -177,7 +214,7 @@ export default function RecommendPage({
 
       return matchesKeyword && matchesSelectedFilters;
     });
-  }, [keyword, selectedFilters]);
+  }, [keyword, selectedFilters, styles]);
 
   const sceneReason = useMemo(() => {
     const scene = selectedFilters.scene.find(
@@ -271,6 +308,14 @@ export default function RecommendPage({
 
       {sceneReason ? (
         <p className="recommend-page__reason">{sceneReason}</p>
+      ) : null}
+
+      {isLoadingStyles ? (
+        <p className="recommend-page__status">款式数据加载中...</p>
+      ) : null}
+
+      {isUsingLocalStyles ? (
+        <p className="recommend-page__status">当前使用本地数据展示。</p>
       ) : null}
 
       {filteredStyles.length > 0 ? (

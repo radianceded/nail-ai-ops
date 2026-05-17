@@ -149,6 +149,11 @@ input {
   background: #185a55;
 }
 
+.nail-card__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 .quick-filters,
 .recommend-page__reason {
   margin-bottom: 18px;
@@ -253,6 +258,16 @@ input {
   background: #edf5f3;
   color: #164f4b;
   margin-top: 0;
+  padding: 12px 14px;
+  line-height: 1.6;
+}
+
+.recommend-page__status {
+  border: 1px solid #e1d7cf;
+  border-radius: 8px;
+  background: #fff;
+  color: #5c5350;
+  margin: 0 0 18px;
   padding: 12px 14px;
   line-height: 1.6;
 }
@@ -418,6 +433,30 @@ input {
   margin: 0 0 14px;
   font-size: 20px;
   line-height: 1.3;
+}
+
+.merchant-panel__title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.merchant-panel__title-row h2 {
+  margin: 0;
+}
+
+.copy-status {
+  border-radius: 8px;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  line-height: 1.6;
+}
+
+.copy-status--error {
+  background: #fff4e8;
+  color: #8b4f19;
 }
 
 .insight-grid {
