@@ -1,44 +1,139 @@
-# Frontend
+# Frontend README
 
-当前前端第一阶段目标是完成客户端推荐页的最小可展示版本：
+`frontend/` 是 Nail AI Ops 的 Vite + React + TypeScript 前端。它负责产品页面展示、用户交互、推荐排序展示和与 FastAPI 后端对接。
 
-- 读取或模拟读取美甲款式数据
-- 展示推荐款式卡片
-- 为后续接入用户需求解析、试戴页和商家端页面预留清晰结构
+## 前端职责
 
-## 数据读取约定
+- 展示首页、客户端推荐页、试戴页和商家运营页。
+- 通过后端 API 获取款式数据和 AI 理解结果。
+- 展示 AI 需求理解的 summary、reason、keywords 和来源。
+- 根据后端返回的结构化 filters 做推荐展示。
+- 在严格匹配为空时执行 relaxed 推荐展示。
+- 展示推荐卡片匹配度和推荐理由。
+- 展示商家端策略总结、多平台文案和运营建议。
 
-当前前端应直接适配成员 B 的 `data/nail_styles.json` 嵌套结构：
+## 页面结构
 
-```ts
-item.style_id
-item.name
-item.tags.style
-item.tags.color
-item.tags.craft
-item.tags.scene
-item.tags.crowd
-item.description
-item.image_path
+```text
+src/
+├── App.tsx
+├── pages/
+│   ├── HomePage.tsx
+│   ├── RecommendPage.tsx
+│   ├── TryOnPage.tsx
+│   └── MerchantDashboard.tsx
+├── components/
+│   └── NailCard.tsx
+├── services/
+│   ├── api.ts
+│   └── projectData.ts
+└── style.css
 ```
 
-图片使用 `item.image_path`，路径形如 `assets/nail-styles/nail_001.png`。
+## 页面切换
 
-## 当前页面
+项目不使用 `react-router`。页面切换由 `App.tsx` 中的 `currentPage` 状态控制：
 
-- `src/App.tsx`：暂时渲染推荐页
-- `src/pages/RecommendPage.tsx`：展示标题、用户需求 mock 输入框和推荐列表
-- `src/components/NailCard.tsx`：展示图片、名称、标签、描述和“试戴这款”按钮
-- `src/services/mockData.ts`：提供 3 条嵌套格式 mock 数据，后续可替换为真实数据读取
+- `home`
+- `recommend`
+- `tryOn`
+- `merchant`
 
-## 本地启动
+这种方式更适合当前 Hackathon MVP，结构直接、依赖少、便于 Demo。
+
+## 推荐页交互
+
+`RecommendPage` 的主要流程：
+
+1. 用户输入自然语言需求。
+2. 点击“让 AI 理解需求”。
+3. 前端调用 `POST /api/parse-preference`。
+4. 展示 `summary`、`reason`、`keywords` 和结果来源。
+5. 如果 `is_relevant=false`，展示无关输入提示，不进入推荐链路。
+6. 如果是美甲需求，前端计算匹配度并展示推荐卡片。
+7. 严格匹配为空时，自动启用 relaxed matching，推荐最接近的款式。
+
+推荐卡片展示：
+
+- 款式图片
+- 款式标签
+- 人气/难度/耗时等信息
+- 匹配度
+- 推荐理由
+- 试戴入口
+
+## 商家端交互
+
+`MerchantDashboard` 的主要流程：
+
+1. 展示款式库统计洞察。
+2. 商家选择运营目标。
+3. 点击“生成运营文案”。
+4. 前端调用 `POST /api/generate-copy`。
+5. 展示：
+   - 结果来源：实时 AI 或本地示例
+   - 运营策略总结
+   - 主推款式建议
+   - 小红书文案
+   - 美团平台文案
+   - 朋友圈文案
+   - 运营建议
+
+## 试戴页交互
+
+`TryOnPage` 当前为 mock / 预览能力：
+
+- 支持上传本地手图并预览。
+- 支持使用示例手图。
+- 上传真实图片时调用 `POST /api/try-on`。
+- 后端保存图片并返回 mock 结果消息。
+- 当前不接真实图像生成。
+
+## 与后端 API 对接
+
+API 调用集中在：
+
+```text
+src/services/api.ts
+```
+
+主要接口：
+
+| 函数 | 后端接口 | 用途 |
+| --- | --- | --- |
+| `fetchStyles` | `GET /api/styles` | 获取款式库 |
+| `parsePreference` | `POST /api/parse-preference` | AI 需求理解 |
+| `generateCopy` | `POST /api/generate-copy` | 商家运营文案生成 |
+| `submitTryOn` | `POST /api/try-on` | 上传手图并获取 mock 试戴结果 |
+
+AI 需求理解由后端完成，前端不保存或读取任何 LLM API Key。
+
+## 启动方式
 
 ```bash
+cd frontend
 npm install
 npm run dev
 ```
 
-默认地址为 `http://localhost:5173`。Vite 配置会在开发环境把仓库根目录的 `assets/` 映射到浏览器的 `/assets/`，因此 mock 数据里的 `/assets/nail-styles/nail_001.png` 可以直接显示。
+Windows PowerShell 如遇 `npm.ps1` 执行策略限制，可使用：
 
-如果 Windows PowerShell 因执行策略拦截 `npm.ps1`，可改用 `npm.cmd install` 和 `npm.cmd run dev`。
+```powershell
+npm.cmd install
+npm.cmd run dev
+```
 
+默认地址：
+
+```text
+http://localhost:5173
+```
+
+## 构建方式
+
+```bash
+cd frontend
+npm run build
+```
+
+当前构建命令会先执行 TypeScript 检查，再执行 Vite build。
