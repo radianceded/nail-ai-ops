@@ -10,6 +10,8 @@ import { generateCopy, type GeneratedCopy } from "../services/api";
 
 interface MerchantDashboardProps {
   onBack: () => void;
+  onHome: () => void;
+  onOpenClient: () => void;
 }
 
 type GoalKey =
@@ -125,7 +127,11 @@ function DistributionList({
   );
 }
 
-export default function MerchantDashboard({ onBack }: MerchantDashboardProps) {
+export default function MerchantDashboard({
+  onBack,
+  onHome,
+  onOpenClient,
+}: MerchantDashboardProps) {
   const [selectedGoal, setSelectedGoal] = useState<GoalKey>(
     "increase_booking_conversion",
   );
@@ -174,9 +180,17 @@ export default function MerchantDashboard({ onBack }: MerchantDashboardProps) {
           <p className="recommend-page__eyebrow">商家端智能运营助手</p>
           <h1>门店美甲款式运营看板</h1>
         </div>
-        <button className="text-button" type="button" onClick={onBack}>
-          返回客户端
-        </button>
+        <div className="page-actions page-actions--end">
+          <button className="text-button" type="button" onClick={onHome}>
+            回到首页
+          </button>
+          <button className="text-button" type="button" onClick={onOpenClient}>
+            进入客户端试戴
+          </button>
+          <button className="text-button" type="button" onClick={onBack}>
+            返回客户端
+          </button>
+        </div>
       </section>
 
       <section className="merchant-page__overview" aria-label="店铺款式库概览">

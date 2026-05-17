@@ -5,6 +5,7 @@ import type { NailStyle } from "../services/projectData";
 interface TryOnPageProps {
   selectedNail: NailStyle | null;
   onBack: () => void;
+  onHome: () => void;
 }
 
 const tagGroups: Array<keyof NailStyle["tags"]> = [
@@ -22,7 +23,11 @@ interface HandImagePreview {
   file?: File;
 }
 
-export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
+export default function TryOnPage({
+  selectedNail,
+  onBack,
+  onHome,
+}: TryOnPageProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const generationTimerRef = useRef<number | null>(null);
   const [handImagePreview, setHandImagePreview] =
@@ -53,9 +58,14 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
   if (!selectedNail) {
     return (
       <main className="try-on-page">
-        <button className="text-button" type="button" onClick={onBack}>
-          返回推荐页
-        </button>
+        <div className="page-actions">
+          <button className="text-button" type="button" onClick={onBack}>
+            返回推荐页
+          </button>
+          <button className="text-button" type="button" onClick={onHome}>
+            回到首页
+          </button>
+        </div>
         <section className="try-on-page__empty">
           <h1>暂未选择美甲款式</h1>
           <p>请返回推荐页选择一款美甲后再进入试戴流程。</p>
@@ -174,9 +184,14 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
 
   return (
     <main className="try-on-page">
-      <button className="text-button" type="button" onClick={onBack}>
-        返回推荐页
-      </button>
+      <div className="page-actions">
+        <button className="text-button" type="button" onClick={onBack}>
+          返回推荐页
+        </button>
+        <button className="text-button" type="button" onClick={onHome}>
+          回到首页
+        </button>
+      </div>
 
       <section className="try-on-page__content">
         <img

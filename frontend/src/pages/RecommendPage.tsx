@@ -318,6 +318,10 @@ export default function RecommendPage({
         <p className="recommend-page__status">当前使用本地数据展示。</p>
       ) : null}
 
+      <div className="recommend-page__result-bar">
+        <span>共匹配 {filteredStyles.length} 款</span>
+      </div>
+
       {filteredStyles.length > 0 ? (
         <section className="recommend-page__list" aria-label="推荐款式列表">
           {filteredStyles.map((style) => (
@@ -329,9 +333,16 @@ export default function RecommendPage({
           ))}
         </section>
       ) : (
-        <p className="recommend-page__empty">
-          暂无匹配款式，可尝试换一个关键词
-        </p>
+        <section className="recommend-page__empty">
+          <p>暂无匹配款式，可尝试减少筛选条件</p>
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={clearFilters}
+          >
+            清空筛选
+          </button>
+        </section>
       )}
     </main>
   );
