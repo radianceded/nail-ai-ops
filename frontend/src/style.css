@@ -432,6 +432,18 @@ input {
   line-height: 1.7;
 }
 
+.try-on-page__status {
+  border-radius: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  line-height: 1.6;
+}
+
+.try-on-page__status--error {
+  background: #fff4e8;
+  color: #8b4f19;
+}
+
 .secondary-button {
   border: 1px solid #c9b8ac;
   border-radius: 8px;

@@ -18,6 +18,14 @@ interface FetchStylesResponse {
   styles: NailStyle[];
 }
 
+export interface TryOnResponse {
+  status: string;
+  style_id: string;
+  message: string;
+  result_type: "mock";
+  result_image_url: string | null;
+}
+
 function toFrontendAssetPath(path: string) {
   return path.startsWith("/") ? path : `/${path}`;
 }
@@ -55,4 +63,24 @@ export async function fetchStyles(): Promise<NailStyle[]> {
       ? toFrontendAssetPath(style.thumbnail_path)
       : undefined,
   }));
+}
+
+export async function submitTryOn(
+  handImage: File,
+  styleId: string,
+): Promise<TryOnResponse> {
+  const formData = new FormData();
+  formData.append("hand_image", handImage);
+  formData.append("style_id", styleId);
+
+  const response = await fetch(`${API_BASE_URL}/api/try-on`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Try-on submit failed: ${response.status}`);
+  }
+
+  return (await response.json()) as TryOnResponse;
 }

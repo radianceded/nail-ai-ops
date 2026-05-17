@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { submitTryOn } from "../services/api";
 import type { NailStyle } from "../services/projectData";
 
 interface TryOnPageProps {
@@ -18,6 +19,7 @@ interface HandImagePreview {
   source: "upload" | "example";
   url: string;
   label: string;
+  file?: File;
 }
 
 export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
@@ -27,6 +29,10 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
     useState<HandImagePreview | null>(null);
   const [isGeneratingResult, setIsGeneratingResult] = useState(false);
   const [showMockResult, setShowMockResult] = useState(false);
+  const [tryOnMessage, setTryOnMessage] = useState(
+    "当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。",
+  );
+  const [tryOnError, setTryOnError] = useState("");
 
   useEffect(() => {
     return () => {
@@ -86,9 +92,12 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
       source: "upload",
       url: URL.createObjectURL(file),
       label: file.name,
+      file,
     });
     setShowMockResult(false);
     setIsGeneratingResult(false);
+    setTryOnError("");
+    setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
   };
 
   const handleUseExampleHandImage = () => {
@@ -100,24 +109,51 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
     });
     setShowMockResult(false);
     setIsGeneratingResult(false);
+    setTryOnError("");
+    setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
   };
 
-  const handleGenerateResult = () => {
+  const showLocalMockResult = (message?: string) => {
+    generationTimerRef.current = window.setTimeout(() => {
+      setTryOnMessage(
+        message ?? "当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。",
+      );
+      setIsGeneratingResult(false);
+      setShowMockResult(true);
+    }, 1000);
+  };
+
+  const handleGenerateResult = async () => {
     if (!handImagePreview || isGeneratingResult) {
       return;
     }
 
     setIsGeneratingResult(true);
     setShowMockResult(false);
+    setTryOnError("");
 
     if (generationTimerRef.current) {
       window.clearTimeout(generationTimerRef.current);
     }
 
-    generationTimerRef.current = window.setTimeout(() => {
+    if (handImagePreview.source === "example" || !handImagePreview.file) {
+      showLocalMockResult();
+      return;
+    }
+
+    try {
+      const result = await submitTryOn(
+        handImagePreview.file,
+        selectedNail.style_id,
+      );
+      setTryOnMessage(result.message);
       setIsGeneratingResult(false);
       setShowMockResult(true);
-    }, 1000);
+    } catch (error) {
+      console.error(error);
+      setTryOnError("后端试戴接口暂不可用，已使用本地 mock 结果。");
+      showLocalMockResult();
+    }
   };
 
   const handleResetHandImage = () => {
@@ -128,6 +164,8 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
     setHandImagePreview(null);
     setShowMockResult(false);
     setIsGeneratingResult(false);
+    setTryOnError("");
+    setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -219,6 +257,12 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
             </section>
           ) : null}
 
+          {tryOnError ? (
+            <p className="try-on-page__status try-on-page__status--error">
+              {tryOnError}
+            </p>
+          ) : null}
+
           {showMockResult ? (
             <section className="try-on-page__result">
               <div className="try-on-page__result-images">
@@ -236,9 +280,7 @@ export default function TryOnPage({ selectedNail, onBack }: TryOnPageProps) {
                   </figure>
                 ) : null}
               </div>
-              <p>
-                当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。
-              </p>
+              <p>{tryOnMessage}</p>
             </section>
           ) : null}
         </div>

@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -25,6 +25,7 @@ app.add_middleware(
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
 DATA_DIR = PROJECT_ROOT / "data"
+UPLOAD_DIR = BASE_DIR / "uploads"
 
 
 def load_json(filename: str):
@@ -95,6 +96,38 @@ def get_tag_system():
 @app.get("/api/recommendation-rules")
 def get_recommendation_rules():
     return load_json("recommendation_rules.json")
+
+
+@app.post("/api/try-on")
+async def try_on(
+    hand_image: UploadFile = File(...),
+    style_id: str = Form(...),
+):
+    if not style_id.strip():
+        raise HTTPException(status_code=400, detail="style_id is required")
+
+    if not hand_image.filename:
+        raise HTTPException(status_code=400, detail="hand_image is required")
+
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    safe_filename = Path(hand_image.filename).name
+    upload_path = UPLOAD_DIR / safe_filename
+
+    image_content = await hand_image.read()
+    if not image_content:
+        raise HTTPException(status_code=400, detail="hand_image is empty")
+
+    upload_path.write_bytes(image_content)
+
+    return {
+        "status": "success",
+        "style_id": style_id,
+        "message": "当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。",
+        "result_type": "mock",
+        "result_image_url": None,
+    }
+
+
 @app.post("/api/generate-copy")
 def generate_copy(request: CopyRequest):
     goal = request.goal
