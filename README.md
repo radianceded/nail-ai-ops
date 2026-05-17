@@ -1,258 +1,122 @@
-
-
 # nail-ai-ops
-
-美甲 AI 试戴与智能运营助手  
-Meituan AI Hackathon Project
 
 ## 项目简介
 
-`nail-ai-ops` 是一个面向单店美甲商家的 AI Hackathon MVP。
+美甲 AI 试戴与单店智能运营助手。项目面向美甲门店 Hackathon MVP，包含客户侧款式推荐与试戴流程，以及商家侧数据洞察和运营文案生成流程。
 
-项目包含两个核心部分：
+当前项目仍是 mock AI 阶段：后端已提供完整 API 链路，但文案生成和试戴结果暂未接入真实 LLM 或图像生成模型。后续可以把当前 mock 服务替换为真实大模型、图像生成或图像编辑接口。
 
-- **客户端试戴展示页**：用户输入美甲需求，筛选/选择款式，上传手图或使用示例手图，生成 AI 试戴效果图。
-- **商家端智能运营助手**：商家选择店铺款式库和运营目标，AI 生成主推策略、上新建议和宣传文案。
+## 当前功能
 
-本项目聚焦“单店美甲 AI 试戴 + 智能运营”，不做大而全平台。
+- 前端基于 Vite + React。
+- 后端基于 FastAPI。
+- 后端读取 `data/*.json` 作为款式库、标签体系、推荐规则、商家目标和数据洞察来源。
+- 推荐页 `RecommendPage` 优先调用 `GET /api/styles` 获取美甲款式，失败时回退本地数据。
+- 商家端 `MerchantDashboard` 调用 `POST /api/generate-copy` 生成三类运营文案，失败时回退本地 mock 文案。
+- 试戴页 `TryOnPage` 支持上传本地手图、使用示例手图、预览图片和生成 mock 试戴结果。
+- 试戴页上传真实图片时调用 `POST /api/try-on`，后端保存图片到 `backend/uploads/` 并返回 mock 结果消息。
 
-## 核心流程
+## 前端启动方式
 
-### 客户端流程
-
-```text
-用户进入首页
-→ 输入需求描述
-→ 自然语言 / 类别筛选
-→ 查看推荐款式
-→ 选择一款美甲
-→ 上传手图 / 使用示例手图
-→ 生成试戴结果图
-→ 咨询 / 预约 / 换一款
-````
-
-### 商家端流程
-
-```text
-商家上传或选择款式库
-→ 选择运营目标
-→ AI 理解款式风格
-→ AI 生成主推策略
-→ AI 生成宣传文案
-→ 输出客户端展示内容
+```powershell
+cd "D:\document\grade22\AI Hackathon\nail-ai-ops\frontend"
+npm install
+npm.cmd run dev
 ```
 
-## MVP 功能
-
-当前版本优先实现：
-
-* 款式库 Mock 数据
-* 美甲标签体系
-* 用户需求输入
-* 款式推荐列表
-* 手图上传 / 示例手图
-* AI 试戴结果生成
-* 商家运营目标选择
-* AI 主推策略生成
-* AI 宣传文案生成
-* Demo 展示闭环
-
-暂不实现：
-
-* 真实支付
-* 真实订单
-* 真实预约系统
-* 价格推荐
-* 用户行为记录
-* 多店平台
-* 实时 AR
-* 复杂推荐模型
-* AI 运营日报
-
-## 技术架构
+默认访问地址：
 
 ```text
-frontend  → 客户端试戴页 + 商家端运营页
-backend   → API 接口 + AI 调用 + 推荐逻辑
-data      → 美甲款式、标签体系、推荐规则、运营目标
-docs      → 架构、流程、分工、业务说明
-assets    → 款式图、示例手图、试戴结果图、截图素材
-ppt       → 汇报大纲、展示文案、Demo 讲解词
+http://localhost:5173
 ```
 
-## 仓库结构
+构建检查：
+
+```powershell
+cd "D:\document\grade22\AI Hackathon\nail-ai-ops\frontend"
+npm.cmd run build
+```
+
+## 后端启动方式
+
+```powershell
+cd "D:\document\grade22\AI Hackathon\nail-ai-ops\backend"
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
+默认后端地址：
+
+```text
+http://127.0.0.1:8000
+```
+
+## 完整本地运行流程
+
+1. 启动后端：
+
+```powershell
+cd "D:\document\grade22\AI Hackathon\nail-ai-ops\backend"
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
+2. 启动前端：
+
+```powershell
+cd "D:\document\grade22\AI Hackathon\nail-ai-ops\frontend"
+npm install
+npm.cmd run dev
+```
+
+3. 打开前端页面：
+
+```text
+http://localhost:5173
+```
+
+4. 推荐页选择美甲款式，进入试戴页，上传本地手图后点击生成试戴结果。
+
+5. 进入商家端，选择运营目标后点击生成运营文案。
+
+## 当前 API 列表
+
+| Method | Path | 说明 |
+| --- | --- | --- |
+| GET | `/health` | 后端健康检查 |
+| GET | `/api/styles` | 获取美甲款式列表 |
+| GET | `/api/analysis` | 获取款式库统计洞察 |
+| GET | `/api/goals` | 获取商家运营目标 |
+| GET | `/api/tag-system` | 获取标签体系 |
+| GET | `/api/recommendation-rules` | 获取推荐规则 |
+| POST | `/api/generate-copy` | 根据运营目标生成 mock 运营文案 |
+| POST | `/api/try-on` | 接收手图和款式 ID，保存上传图并返回 mock 试戴结果 |
+
+## Mock AI 说明
+
+当前所有 AI 能力均为 demo mock：
+
+- `/api/generate-copy` 根据运营目标返回预置文案。
+- `/api/try-on` 保存上传图片，但不生成真实试戴图片，只返回 mock 结果消息。
+- 推荐页主要基于款式数据、标签和筛选规则展示结果。
+
+后续可接入：
+
+- LLM 文案生成接口，用于替换 `/api/generate-copy` 的预置文案。
+- 图像生成或图像编辑模型，用于替换 `/api/try-on` 的 mock 结果。
+- 更完整的推荐模型或用户行为数据，用于升级款式推荐。
+
+## 目录说明
 
 ```text
 nail-ai-ops/
-├── README.md
-├── .gitignore
-├── package.json
-├── requirements.txt
-│
-├── frontend/
-│   ├── README.md
-│   ├── public/
-│   └── src/
-│       ├── pages/
-│       │   ├── HomePage.tsx
-│       │   ├── RecommendPage.tsx
-│       │   ├── TryOnPage.tsx
-│       │   ├── ResultPage.tsx
-│       │   └── MerchantDashboard.tsx
-│       ├── components/
-│       ├── services/
-│       └── App.tsx
-│
-├── backend/
-│   ├── README.md
-│   ├── main.py
-│   ├── api/
-│   ├── services/
-│   └── utils/
-│
-├── data/
-│   ├── nail_styles.json
-│   ├── tag_system.json
-│   ├── recommendation_rules.json
-│   ├── merchant_goals.json
-│   └── mock_analysis.json
-│
-├── docs/
-│   ├── architecture.md
-│   ├── mvp.md
-│   ├── team.md
-│   ├── user-flow.md
-│   ├── merchant-flow.md
-│   ├── prompt-design.md
-│   ├── tag-system.md
-│   ├── recommendation-rules.md
-│   ├── stat-analysis.md
-│   └── business/
-│
-├── assets/
-│   ├── nail-styles/
-│   ├── sample-hands/
-│   ├── tryon-results/
-│   ├── screenshots/
-│   └── ppt/
-│
-├── ppt/
-│   ├── outline.md
-│   ├── slide-copy.md
-│   └── final-demo-script.md
-│
-└── scripts/
-    ├── init_mock_data.py
-    └── run_demo.sh
+├── backend/              FastAPI 后端
+├── frontend/             Vite + React 前端
+├── data/                 款式、标签、规则、分析和商家目标 JSON 数据
+├── assets/               款式图片和展示素材
+├── docs/                 项目文档
+└── ppt/                  汇报材料
 ```
-
-## 数据示例
-
-```json
-{
-  "style_id": "nail_001",
-  "name": "奶油裸粉法式",
-  "tags": {
-    "style": ["法式美甲", "韩式美甲"],
-    "color": ["白色", "透明色"],
-    "craft": ["法式"],
-    "scene": ["日常", "通勤"],
-    "crowd": ["学生党", "上班族"]
-  },
-  "description": "适合日常通勤和温柔风穿搭的低饱和裸粉法式美甲。",
-  "image_path": "assets/nail-styles/nail_001.png"
-}
-```
-
-## AI 能力
-
-本项目中的 AI 能力主要包括：
-
-1. **用户需求理解**
-   从自然语言中提取风格、颜色、场景等偏好。
-
-2. **款式推荐**
-   根据用户偏好和款式标签返回推荐款式。
-
-3. **美甲试戴生成**
-   根据用户手图和选择的美甲款式生成试戴效果图。
-
-4. **商家运营生成**
-   根据款式库和运营目标生成主推策略与宣传文案。
-
-## 团队分工
-
-### A
-
-负责项目统筹、技术架构、GitHub 仓库、Demo 集成、客户端流程和 AI 调用。
-
-对应成果：
-
-* `README.md`
-* `frontend/`
-* `backend/`
-* `docs/architecture.md`
-* `docs/mvp.md`
-* `docs/user-flow.md`
-
-### 成员 B
-
-负责款式数据、标签体系、推荐规则和简单统计分析。
-
-对应成果：
-
-* `data/nail_styles.json`
-* `data/tag_system.json`
-* `data/recommendation_rules.json`
-* `data/mock_analysis.json`
-* `docs/tag-system.md`
-* `docs/recommendation-rules.md`
-* `docs/stat-analysis.md`
-* `assets/nail-styles/`
-
-### 成员 C
-
-负责商家运营场景、运营目标、AI 文案模板、商业价值和 PPT 表达。
-
-对应成果：
-
-* `docs/business/`
-* `docs/merchant-flow.md`
-* `docs/prompt-design.md`
-* `ppt/`
-* `assets/ppt/`
-
-## Demo 展示路径
-
-```text
-1. 商家选择款式库
-2. 商家选择运营目标
-3. AI 生成主推策略和宣传文案
-4. 客户端展示推荐款式
-5. 用户输入需求
-6. 系统推荐美甲款式
-7. 用户选择款式
-8. 上传手图 / 使用示例手图
-9. 生成试戴结果图
-10. 用户点击咨询 / 预约 / 换一款
-```
-
-## 开发计划
-
-* [ ] 初始化仓库结构
-* [ ] 整理 Mock 款式数据
-* [ ] 完成标签体系与推荐规则
-* [ ] 完成客户端基础页面
-* [ ] 完成商家端基础页面
-* [ ] 完成后端 API
-* [ ] 接入 AI 推荐 / 文案生成
-* [ ] 接入或模拟 AI 试戴结果生成
-* [ ] 完成 Demo 展示脚本
-* [ ] 完成 PPT 汇报材料
-
-## 当前状态
-
-项目处于 Hackathon MVP 设计与原型开发阶段。
-
-```
-

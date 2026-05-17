@@ -7,3 +7,4 @@ dist/
 .DS_Store
 backend/.venv/
 backend/__pycache__/
+backend/uploads/
