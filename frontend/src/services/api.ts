@@ -54,7 +54,9 @@ export interface ParsedPreference {
 }
 
 function toFrontendAssetPath(path: string) {
-  return path.startsWith("/") ? path : `/${path}`;
+  const normalizedPath = path.replace("assets/nail_styles/", "assets/nail-styles/");
+
+  return normalizedPath.startsWith("/") ? normalizedPath : `/${normalizedPath}`;
 }
 
 export async function parsePreference(text: string): Promise<ParsedPreference> {

@@ -96,7 +96,9 @@ export interface MerchantGoals {
 }
 
 function toFrontendAssetPath(path: string) {
-  return path.startsWith("/") ? path : `/${path}`;
+  const normalizedPath = path.replace("assets/nail_styles/", "assets/nail-styles/");
+
+  return normalizedPath.startsWith("/") ? normalizedPath : `/${normalizedPath}`;
 }
 
 function toStringArray(value: unknown): string[] {
