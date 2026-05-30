@@ -81,13 +81,13 @@ src/
 
 ## 试戴页交互
 
-`TryOnPage` 当前为 mock / 预览能力：
+`TryOnPage` 当前默认仍为 mock / 预览能力：
 
 - 支持上传本地手图并预览。
 - 支持使用示例手图。
 - 上传真实图片时调用 `POST /api/try-on`。
-- 后端保存图片并返回 mock 结果消息。
-- 当前不接真实图像生成。
+- 后端保存图片；若 `IMAGE_EDIT_ENABLED=true` 且图像编辑成功，返回 `source: "image_edit"` 和生成图 URL。
+- 图像编辑未开启或失败时，后端返回 `source: "mock"`。
 
 ## 与后端 API 对接
 
@@ -104,7 +104,7 @@ src/services/api.ts
 | `fetchStyles` | `GET /api/styles` | 获取款式库 |
 | `parsePreference` | `POST /api/parse-preference` | AI 需求理解 |
 | `generateCopy` | `POST /api/generate-copy` | 商家运营文案生成 |
-| `submitTryOn` | `POST /api/try-on` | 上传手图并获取 mock 试戴结果 |
+| `submitTryOn` | `POST /api/try-on` | 上传手图并获取 image_edit 或 mock 试戴结果 |
 
 AI 需求理解由后端完成，前端不保存或读取任何 LLM API Key。
 

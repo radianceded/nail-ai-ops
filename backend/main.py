@@ -6,6 +6,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from services.image_edit_client import ImageEditUnavailableError, generate_try_on_image
 from services.llm_client import LLMUnavailableError, call_llm_json
 
 app = FastAPI(
@@ -492,6 +493,14 @@ def get_styles():
     }
 
 
+def find_style_by_id(style_id: str) -> dict[str, Any] | None:
+    for style in get_styles()["styles"]:
+        if str(style.get("style_id", "")).strip() == style_id.strip():
+            return style
+
+    return None
+
+
 @app.get("/api/analysis")
 def get_analysis():
     return load_json("mock_analysis.json")
@@ -609,10 +618,28 @@ async def try_on(
 
     upload_path.write_bytes(image_content)
 
+    style = find_style_by_id(style_id) or {"style_id": style_id}
+
+    try:
+        image_edit_result = generate_try_on_image(upload_path, style)
+    except ImageEditUnavailableError:
+        image_edit_result = None
+
+    if image_edit_result:
+        return {
+            "status": "success",
+            "style_id": style_id,
+            "source": "image_edit",
+            "message": "已通过后端 image editing client 生成试戴图；效果仍需人工验证。",
+            "result_type": "image_edit",
+            "result_image_url": image_edit_result["result_image_url"],
+        }
+
     return {
         "status": "success",
         "style_id": style_id,
-        "message": "当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。",
+        "source": "mock",
+        "message": "当前为 mock 试戴结果；真实图像编辑未启用或调用失败。",
         "result_type": "mock",
         "result_image_url": None,
     }

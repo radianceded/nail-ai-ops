@@ -37,6 +37,9 @@ export default function TryOnPage({
   const [tryOnMessage, setTryOnMessage] = useState(
     "当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。",
   );
+  const [tryOnResultImageUrl, setTryOnResultImageUrl] = useState<string | null>(
+    null,
+  );
   const [tryOnError, setTryOnError] = useState("");
 
   useEffect(() => {
@@ -106,6 +109,7 @@ export default function TryOnPage({
     });
     setShowMockResult(false);
     setIsGeneratingResult(false);
+    setTryOnResultImageUrl(null);
     setTryOnError("");
     setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
   };
@@ -119,11 +123,13 @@ export default function TryOnPage({
     });
     setShowMockResult(false);
     setIsGeneratingResult(false);
+    setTryOnResultImageUrl(null);
     setTryOnError("");
     setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
   };
 
   const showLocalMockResult = (message?: string) => {
+    setTryOnResultImageUrl(null);
     generationTimerRef.current = window.setTimeout(() => {
       setTryOnMessage(
         message ?? "当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。",
@@ -140,6 +146,7 @@ export default function TryOnPage({
 
     setIsGeneratingResult(true);
     setShowMockResult(false);
+    setTryOnResultImageUrl(null);
     setTryOnError("");
 
     if (generationTimerRef.current) {
@@ -157,6 +164,7 @@ export default function TryOnPage({
         selectedNail.style_id,
       );
       setTryOnMessage(result.message);
+      setTryOnResultImageUrl(result.result_image_url);
       setIsGeneratingResult(false);
       setShowMockResult(true);
     } catch (error) {
@@ -174,6 +182,7 @@ export default function TryOnPage({
     setHandImagePreview(null);
     setShowMockResult(false);
     setIsGeneratingResult(false);
+    setTryOnResultImageUrl(null);
     setTryOnError("");
     setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
 
@@ -292,6 +301,12 @@ export default function TryOnPage({
                       alt={handImagePreview.label}
                     />
                     <figcaption>手图预览</figcaption>
+                  </figure>
+                ) : null}
+                {tryOnResultImageUrl ? (
+                  <figure>
+                    <img src={tryOnResultImageUrl} alt="AI 试戴生成图" />
+                    <figcaption>AI 试戴生成图</figcaption>
                   </figure>
                 ) : null}
               </div>

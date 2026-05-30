@@ -7,8 +7,9 @@
 - 读取 `../data/*.json` 中的款式库、标签体系、推荐规则和商家目标。
 - 提供 C 端推荐页所需的 `/api/styles` 和 `/api/parse-preference`。
 - 提供 B 端商家页所需的 `/api/generate-copy`。
-- 提供 mock 试戴上传接口 `/api/try-on`，保存手图到 `backend/uploads/`。
+- 提供试戴上传接口 `/api/try-on`，保存手图到 `backend/uploads/`；图像编辑开关开启时优先尝试 DeepAI，失败时回退 mock。
 - 封装 LongCat OpenAI-compatible API 调用。
+- 预留可插拔 image editing client，真实 Key 只从后端环境变量读取。
 - 兜底处理 LLM 失败、JSON 解析失败和字段缺失。
 
 ## 主要接口
@@ -23,7 +24,7 @@
 | GET | `/api/recommendation-rules` | 返回推荐规则 |
 | POST | `/api/parse-preference` | 调用 LLM 解析用户美甲需求 |
 | POST | `/api/generate-copy` | 调用 LLM 生成商家运营策略和文案 |
-| POST | `/api/try-on` | 保存上传手图并返回 mock 试戴结果 |
+| POST | `/api/try-on` | 保存上传手图；开启图像编辑时优先返回 image_edit，否则返回 mock |
 
 ## LLM Client
 
@@ -45,6 +46,23 @@ backend/services/llm_client.py
 - 不打印 API Key。
 - 请求失败或 JSON 解析失败时返回 `None`，业务接口走 mock fallback。
 
+## Image Edit Client
+
+图像编辑候选方案集中在：
+
+```text
+backend/services/image_edit_client.py
+```
+
+实现要点：
+
+- 默认关闭，不替换现有 `/api/try-on` mock。
+- `IMAGE_EDIT_ENABLED=true` 时，`/api/try-on` 会优先尝试调用 DeepAI AI Photo Editor 的 `image-editor` 接口。
+- DeepAI 调用失败、未配置 Key、返回结果不可用或 provider 不支持时，接口自动 fallback 到 mock。
+- 返回 `source: "image_edit" | "mock"`，方便前端和演示区分结果来源。
+- 当前 prompt 会要求保留原手部、肤色、姿势、光线和背景，只修改指甲区域。
+- DeepAI 可能没有精确 mask 能力，因此生成质量、指甲区域控制和手部保持效果不保证，必须继续保留 mock fallback。
+
 ## .env 配置
 
 在 `backend/.env` 中配置真实 Key：
@@ -54,6 +72,10 @@ LLM_API_KEY=your_api_key_here
 LLM_BASE_URL=https://api.longcat.chat/openai
 LLM_MODEL=LongCat-Flash-Lite
 LLM_ENABLED=true
+IMAGE_EDIT_ENABLED=false
+IMAGE_EDIT_PROVIDER=deepai
+IMAGE_EDIT_API_KEY=your_key_here
+IMAGE_EDIT_BASE_URL=https://api.deepai.org/api
 ```
 
 安全要求：
@@ -62,6 +84,7 @@ LLM_ENABLED=true
 - 不要提交 `.env`。
 - `.env` 已被 `.gitignore` 忽略。
 - 不要在日志中打印 API Key、系统提示词或内部配置。
+- 不要提交真实 `IMAGE_EDIT_API_KEY`。
 
 ## 启动方式
 
@@ -103,5 +126,6 @@ python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
 
 ## 当前限制
 
-- `/api/try-on` 当前不做真实图像生成，只保存上传图并返回 mock 结果。
+- 真实图像级美甲试戴需要 image editing / inpainting 模型；当前仅预留可插拔接口，DeepAI 是候选方案之一，需要进一步验证生成质量。
+- DeepAI AI Photo Editor 可能没有精确 mask 能力，因此 `/api/try-on` 必须保留 mock fallback。
 - 后端未接数据库、登录系统或真实订单/预约系统。

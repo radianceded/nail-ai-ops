@@ -31,8 +31,12 @@ export interface NailStyle {
   suitable_hand_types?: string[];
 }
 
-interface NailStylesPayload {
-  styles: NailStyle[];
+type RawNailStyle = Omit<NailStyle, "tags"> & {
+  tags?: Partial<Record<keyof NailStyle["tags"], string[] | string>>;
+};
+
+interface RawNailStylesPayload {
+  styles: RawNailStyle[];
 }
 
 export interface DistributionItem {
@@ -95,17 +99,57 @@ function toFrontendAssetPath(path: string) {
   return path.startsWith("/") ? path : `/${path}`;
 }
 
+function toStringArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map(String).filter(Boolean);
+  }
+
+  return value ? [String(value)] : [];
+}
+
+function normalizeTags(tags: RawNailStyle["tags"] = {}): NailStyle["tags"] {
+  return {
+    style: toStringArray(tags.style),
+    color: toStringArray(tags.color),
+    craft: toStringArray(tags.craft),
+    scene: toStringArray(tags.scene),
+    crowd: toStringArray(tags.crowd),
+    length: toStringArray(tags.length),
+    texture: toStringArray(tags.texture),
+  };
+}
+
 export const nailStyles: NailStyle[] = (
-  nailStylesJson as NailStylesPayload
+  nailStylesJson as unknown as RawNailStylesPayload
 ).styles.map((style) => ({
   ...style,
+  tags: normalizeTags(style.tags),
   image_path: toFrontendAssetPath(style.image_path),
   thumbnail_path: style.thumbnail_path
     ? toFrontendAssetPath(style.thumbnail_path)
     : undefined,
 }));
 
-export const mockAnalysis = mockAnalysisJson as MockAnalysis;
+const rawMockAnalysis = mockAnalysisJson as unknown as Partial<MockAnalysis>;
+
+export const mockAnalysis: MockAnalysis = {
+  style_distribution: rawMockAnalysis.style_distribution ?? {},
+  color_distribution: rawMockAnalysis.color_distribution ?? {},
+  scene_distribution: rawMockAnalysis.scene_distribution ?? {},
+  craft_distribution: rawMockAnalysis.craft_distribution ?? {},
+  difficulty_distribution: rawMockAnalysis.difficulty_distribution ?? {},
+  popularity_stats: rawMockAnalysis.popularity_stats ?? {
+    average: 0,
+    min: 0,
+    max: 0,
+    median: 0,
+  },
+  trend_analysis: rawMockAnalysis.trend_analysis ?? {},
+  data_quality_notes: {
+    warnings: rawMockAnalysis.data_quality_notes?.warnings ?? [],
+    recommendation: rawMockAnalysis.data_quality_notes?.recommendation,
+  },
+};
 export const recommendationRules =
   recommendationRulesJson as RecommendationRules;
 export const tagSystem = tagSystemJson as TagSystem;

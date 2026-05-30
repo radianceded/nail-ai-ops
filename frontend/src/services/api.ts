@@ -29,8 +29,9 @@ interface FetchStylesResponse {
 export interface TryOnResponse {
   status: string;
   style_id: string;
+  source: "image_edit" | "mock";
   message: string;
-  result_type: "mock";
+  result_type: "image_edit" | "mock";
   result_image_url: string | null;
 }
 

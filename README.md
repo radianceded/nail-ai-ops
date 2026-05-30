@@ -11,7 +11,7 @@
 - **C 端用户**：用自然语言描述美甲需求，例如“适合通勤、显白、不要太夸张”，系统理解需求后推荐款式。
 - **B 端美甲门店**：根据款式库数据和运营目标，生成主推策略、多平台文案和运营建议。
 
-项目不是简单的款式列表展示，而是围绕 LongCat LLM 做需求理解、标签规范化、推荐解释和商家运营辅助。当前真实图像级试戴生成尚未接入，试戴页保留 mock / 预览能力，适合作为 Hackathon MVP 展示。
+项目不是简单的款式列表展示，而是围绕 LongCat LLM 做需求理解、标签规范化、推荐解释和商家运营辅助。真实图像级试戴需要 image editing / inpainting 模型支持，当前已预留可插拔后端接口，默认仍保留 mock / 预览能力，适合作为 Hackathon MVP 展示。
 
 ## 核心亮点
 
@@ -22,8 +22,9 @@
 - **strict / relaxed 推荐机制**：先严格匹配；严格结果为空时自动放宽条件，展示最接近款式。
 - **匹配度与推荐理由**：推荐卡片展示 match score 和命中/接近理由。
 - **商家端运营生成**：根据运营目标生成策略总结、主推理由、小红书/美团/朋友圈文案和运营建议。
+- **图像编辑接口预留**：`/api/try-on` 可在后端开关开启后优先尝试 DeepAI AI Photo Editor，并在失败时自动回退 mock。
 - **prompt injection / 无关输入防护**：识别身份改写、忽略指令、索要系统提示词/API Key 等输入，不进入推荐链路。
-- **mock fallback 稳定兜底**：LLM 不可用、JSON 解析失败或接口异常时自动走本地 mock，保证页面可用。
+- **mock fallback 稳定兜底**：LLM 不可用、图像编辑失败、JSON 解析失败或接口异常时自动走本地 mock，保证页面可用。
 
 ## 产品流程
 
@@ -55,16 +56,21 @@ flowchart TB
   FE[Vite + React + TypeScript Frontend]
   BE[FastAPI Backend]
   LLM[LLM Client]
+  IMG[Image Edit Client]
   LC[LongCat OpenAI-compatible API]
+  DEEPAI[DeepAI AI Photo Editor Candidate]
   DATA[本地款式库 JSON]
   NORM[Normalize / Guard / Fallback]
 
   FE -->|REST API| BE
   BE --> DATA
+  BE --> IMG
   BE --> NORM
   NORM --> LLM
   LLM --> LC
+  IMG --> DEEPAI
   NORM -->|LLM 失败或输出异常| MOCK[Mock Fallback]
+  IMG -->|图像编辑失败或关闭| MOCK
 ```
 
 关键说明：
@@ -72,7 +78,7 @@ flowchart TB
 - API Key 只在后端 `.env` 中读取，不进入前端。
 - LLM 输出必须经过 JSON 清洗、字段补齐和标签规范化。
 - 推荐链路在前端继续保留 strict / relaxed 两层展示逻辑。
-- `/api/try-on` 当前只保存上传图并返回 mock 试戴结果，不做真实图像生成。
+- `/api/try-on` 默认仍保存上传图并返回 mock；当 `IMAGE_EDIT_ENABLED=true` 时会先尝试后端 image editing client，失败后继续 mock fallback。
 
 ## 功能模块
 
@@ -82,12 +88,13 @@ flowchart TB
 | 客户端推荐页 | 输入自然语言需求，展示 AI 理解、筛选标签、推荐结果 |
 | AI 需求理解模块 | 调用 `/api/parse-preference`，展示 summary、reason、keywords 和来源 |
 | 推荐卡片 | 展示款式图、标签、匹配度、推荐理由和试戴入口 |
-| 试戴页 | 上传本地手图或使用示例手图，展示 mock 试戴结果 |
+| 试戴页 | 上传本地手图或使用示例手图；默认展示 mock 试戴结果，后端开关开启后可尝试真实图像编辑 |
 | 商家运营页 | 展示款式库洞察，选择运营目标，生成运营策略和多平台文案 |
 
 ## 技术实现
 
 - **LLM Client 封装**：`backend/services/llm_client.py` 统一处理 LongCat 请求。
+- **Image Edit Client 预留**：`backend/services/image_edit_client.py` 统一处理后端图像编辑候选方案，当前优先预留 DeepAI AI Photo Editor。
 - **OpenAI-compatible URL 兼容**：支持 `.../openai`、`.../openai/v1`、`.../openai/v1/chat/completions` 三种配置。
 - **JSON 输出清洗**：支持清理 ```json code block``` 后再 `json.loads`。
 - **`normalize_parsed_preference`**：补齐 `source/is_relevant/intent_type/filters/keywords/reason` 等字段。
@@ -95,7 +102,7 @@ flowchart TB
 - **`normalize_filters_to_catalog`**：将“上学、自然、低调、清新”等语义映射到本地标签。
 - **strict / relaxed matching**：严格匹配为空时，前端自动放宽并按 match score 展示 Top 推荐。
 - **prompt injection guard**：拦截“忽略指令、输出系统提示词、输出 API Key、改变身份”等输入。
-- **fallback strategy**：LLM 关闭、请求失败、JSON 失败、字段缺失时回退 mock。
+- **fallback strategy**：LLM 关闭、图像编辑关闭或失败、请求失败、JSON 失败、字段缺失时回退 mock。
 
 ## 快速启动
 
@@ -147,6 +154,10 @@ LLM_API_KEY=your_api_key_here
 LLM_BASE_URL=https://api.longcat.chat/openai
 LLM_MODEL=LongCat-Flash-Lite
 LLM_ENABLED=true
+IMAGE_EDIT_ENABLED=false
+IMAGE_EDIT_PROVIDER=deepai
+IMAGE_EDIT_API_KEY=your_key_here
+IMAGE_EDIT_BASE_URL=https://api.deepai.org/api
 ```
 
 安全约定：
@@ -155,6 +166,7 @@ LLM_ENABLED=true
 - `.env` 已被 `.gitignore` 忽略。
 - 前端代码中不得出现 API Key。
 - 日志不打印 API Key、系统提示词或内部配置。
+- 不要提交真实 `IMAGE_EDIT_API_KEY`；`.env.example` 只保留占位符。
 
 ## API 示例
 
@@ -163,7 +175,7 @@ LLM_ENABLED=true
 | GET | `/api/styles` | 获取款式库 |
 | POST | `/api/parse-preference` | 解析用户自然语言美甲需求 |
 | POST | `/api/generate-copy` | 生成商家运营策略和多平台文案 |
-| POST | `/api/try-on` | 上传手图并返回 mock 试戴结果 |
+| POST | `/api/try-on` | 上传手图；开启图像编辑时优先返回 image_edit，否则返回 mock |
 
 ### `/api/parse-preference`
 
@@ -205,11 +217,28 @@ LLM_ENABLED=true
 
 最后一个会被识别为无关输入或 prompt injection，不进入推荐链路。
 
+### `/api/try-on`
+
+返回字段包含 `source`：
+
+```json
+{
+  "status": "success",
+  "style_id": "nail_001",
+  "source": "image_edit",
+  "message": "已通过后端 image editing client 生成试戴图；效果仍需人工验证。",
+  "result_type": "image_edit",
+  "result_image_url": "https://..."
+}
+```
+
+当图像编辑关闭、未配置 Key、DeepAI 请求失败或返回结果不可用时，接口自动返回 `source: "mock"`。
+
 ## 当前限制
 
-- 真实图像级美甲试戴生成尚未接入。
-- 试戴页目前为 mock / 预览能力。
-- 后续可接入 image editing / inpainting 模型。
+- 真实图像级美甲试戴需要 image editing / inpainting 模型，而不是只靠款式推荐文本。
+- 当前仅预留可插拔接口；DeepAI AI Photo Editor 是候选方案之一，需要进一步验证生成质量、手部保持能力和美甲区域控制能力。
+- DeepAI AI Photo Editor 可能没有精确 mask 能力，难以保证只修改指甲区域，因此必须保留 mock fallback。
 - 当前未接数据库和登录系统。
 - 当前适合 Hackathon MVP 展示，不是完整商业化系统。
 
