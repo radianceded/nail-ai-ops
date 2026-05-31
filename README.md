@@ -22,9 +22,31 @@
 - **strict / relaxed 推荐机制**：先严格匹配；严格结果为空时自动放宽条件，展示最接近款式。
 - **匹配度与推荐理由**：推荐卡片展示 match score 和命中/接近理由。
 - **商家端运营生成**：根据运营目标生成策略总结、主推理由、小红书/美团/朋友圈文案和运营建议。
-- **图像编辑接口预留**：`/api/try-on` 可在后端开关开启后优先尝试 DeepAI AI Photo Editor，并在失败时自动回退 mock。
+- **图像编辑 API 可插拔接口预留**：`/api/try-on` 默认返回稳定 mock 预览；后端保留 image editing / inpainting 服务接入点。
 - **prompt injection / 无关输入防护**：识别身份改写、忽略指令、索要系统提示词/API Key 等输入，不进入推荐链路。
 - **mock fallback 稳定兜底**：LLM 不可用、图像编辑失败、JSON 解析失败或接口异常时自动走本地 mock，保证页面可用。
+
+## 当前版本状态
+
+当前版本已完成：
+
+- 用户自然语言需求理解
+- LongCat LLM 接入
+- Prompt Injection / 无关输入拦截
+- 标签规范化
+- strict / relaxed 推荐
+- 推荐理由与匹配度
+- 商家端运营策略与多平台文案生成
+- 试戴预览流程
+- 图像编辑 API 可插拔接口预留
+
+当前限制：
+
+- 真实图像级美甲试戴生成尚未作为稳定能力接入。
+- 当前 `/api/try-on` 默认使用 mock 试戴预览。
+- 项目后端已预留 `image_edit_client`，可接入 DeepAI、OpenAI Image Edit、Replicate、Hugging Face Inpainting 等图像编辑服务。
+- 真实美甲试戴的产品级路线是：用户手图 → 指甲区域识别 / mask → image editing / inpainting → 局部重绘指甲区域。
+- 由于图像编辑质量依赖模型能力、API 权限、mask 精度与生成稳定性，当前版本不把真实生图作为强依赖。
 
 ## 产品流程
 
@@ -58,7 +80,7 @@ flowchart TB
   LLM[LLM Client]
   IMG[Image Edit Client]
   LC[LongCat OpenAI-compatible API]
-  DEEPAI[DeepAI AI Photo Editor Candidate]
+  EDITOR[Image Editing / Inpainting Provider]
   DATA[本地款式库 JSON]
   NORM[Normalize / Guard / Fallback]
 
@@ -68,7 +90,7 @@ flowchart TB
   BE --> NORM
   NORM --> LLM
   LLM --> LC
-  IMG --> DEEPAI
+  IMG --> EDITOR
   NORM -->|LLM 失败或输出异常| MOCK[Mock Fallback]
   IMG -->|图像编辑失败或关闭| MOCK
 ```
@@ -78,7 +100,7 @@ flowchart TB
 - API Key 只在后端 `.env` 中读取，不进入前端。
 - LLM 输出必须经过 JSON 清洗、字段补齐和标签规范化。
 - 推荐链路在前端继续保留 strict / relaxed 两层展示逻辑。
-- `/api/try-on` 默认仍保存上传图并返回 mock；当 `IMAGE_EDIT_ENABLED=true` 时会先尝试后端 image editing client，失败后继续 mock fallback。
+- `/api/try-on` 默认保存上传图并返回 mock 试戴预览；当 `IMAGE_EDIT_ENABLED=true` 且图像编辑服务配置有效时，会先尝试后端 image editing client，失败后继续 mock fallback。
 
 ## 功能模块
 
@@ -88,13 +110,13 @@ flowchart TB
 | 客户端推荐页 | 输入自然语言需求，展示 AI 理解、筛选标签、推荐结果 |
 | AI 需求理解模块 | 调用 `/api/parse-preference`，展示 summary、reason、keywords 和来源 |
 | 推荐卡片 | 展示款式图、标签、匹配度、推荐理由和试戴入口 |
-| 试戴页 | 上传本地手图或使用示例手图；默认展示 mock 试戴结果，后端开关开启后可尝试真实图像编辑 |
+| 试戴页 | 上传本地手图或使用示例手图；默认展示 mock 试戴预览，后端保留真实图像编辑接口 |
 | 商家运营页 | 展示款式库洞察，选择运营目标，生成运营策略和多平台文案 |
 
 ## 技术实现
 
 - **LLM Client 封装**：`backend/services/llm_client.py` 统一处理 LongCat 请求。
-- **Image Edit Client 预留**：`backend/services/image_edit_client.py` 统一处理后端图像编辑候选方案，当前优先预留 DeepAI AI Photo Editor。
+- **Image Edit Client 预留**：`backend/services/image_edit_client.py` 统一处理后端图像编辑候选方案，可扩展 DeepAI、OpenAI Image Edit、Replicate、Hugging Face Inpainting 等服务。
 - **OpenAI-compatible URL 兼容**：支持 `.../openai`、`.../openai/v1`、`.../openai/v1/chat/completions` 三种配置。
 - **JSON 输出清洗**：支持清理 ```json code block``` 后再 `json.loads`。
 - **`normalize_parsed_preference`**：补齐 `source/is_relevant/intent_type/filters/keywords/reason` 等字段。
@@ -103,6 +125,34 @@ flowchart TB
 - **strict / relaxed matching**：严格匹配为空时，前端自动放宽并按 match score 展示 Top 推荐。
 - **prompt injection guard**：拦截“忽略指令、输出系统提示词、输出 API Key、改变身份”等输入。
 - **fallback strategy**：LLM 关闭、图像编辑关闭或失败、请求失败、JSON 失败、字段缺失时回退 mock。
+
+## AI 试戴能力说明
+
+### 当前实现
+
+- 用户可以在试戴页上传手图，也可以使用示例图完成演示流程。
+- `/api/try-on` 默认返回 mock 试戴预览，保证 Demo 稳定可演示。
+- 后端保留 `backend/services/image_edit_client.py` 作为图像编辑 API 的可插拔入口。
+- 当 `IMAGE_EDIT_ENABLED=true` 且 `IMAGE_EDIT_API_KEY`、`IMAGE_EDIT_BASE_URL`、`IMAGE_EDIT_MODEL` 配置有效时，后端会尝试调用图像编辑服务。
+- 图像编辑服务关闭、配置缺失、调用失败或返回异常时，接口会自动 fallback 到 mock，不影响前端展示。
+
+### 为什么不直接依赖多模态聊天模型
+
+- 多模态聊天模型主要解决“看图理解”和图文分析。
+- 真实戴甲图生成需要 image editing / inpainting，而不是只靠文本推荐或普通聊天补全。
+- 直接用 prompt 改整张图可能破坏手型、肤色、姿势、光线和背景。
+
+### 后续技术路线
+
+```mermaid
+flowchart LR
+  A[用户上传手图] --> B[识别指甲区域]
+  B --> C[生成 mask]
+  C --> D[图像编辑模型局部重绘]
+  D --> E[返回试戴图]
+```
+
+产品级真实试戴路线是：用户手图 → 指甲区域识别 / mask → image editing / inpainting → 局部重绘指甲区域。由于生成质量依赖模型能力、API 权限、mask 精度与生成稳定性，当前版本不把真实生图作为强依赖。
 
 ## 快速启动
 
@@ -156,8 +206,9 @@ LLM_MODEL=LongCat-Flash-Lite
 LLM_ENABLED=true
 IMAGE_EDIT_ENABLED=false
 IMAGE_EDIT_PROVIDER=deepai
-IMAGE_EDIT_API_KEY=your_key_here
+IMAGE_EDIT_API_KEY=your_image_edit_api_key_here
 IMAGE_EDIT_BASE_URL=https://api.deepai.org/api
+IMAGE_EDIT_MODEL=image-editor
 ```
 
 安全约定：
@@ -175,7 +226,7 @@ IMAGE_EDIT_BASE_URL=https://api.deepai.org/api
 | GET | `/api/styles` | 获取款式库 |
 | POST | `/api/parse-preference` | 解析用户自然语言美甲需求 |
 | POST | `/api/generate-copy` | 生成商家运营策略和多平台文案 |
-| POST | `/api/try-on` | 上传手图；开启图像编辑时优先返回 image_edit，否则返回 mock |
+| POST | `/api/try-on` | 上传手图和 `style_id`；默认返回 mock 试戴预览，开启并配置图像编辑服务时优先尝试 image_edit |
 
 ### `/api/parse-preference`
 
@@ -219,34 +270,58 @@ IMAGE_EDIT_BASE_URL=https://api.deepai.org/api
 
 ### `/api/try-on`
 
-返回字段包含 `source`：
+说明：
+
+- 上传手图和 `style_id`。
+- 默认返回 mock 试戴预览。
+- 如果配置 `IMAGE_EDIT_ENABLED=true`，后端会尝试调用图像编辑服务。
+- 无论图像编辑是否成功，都保持 fallback，不影响 Demo。
+
+mock fallback 返回示例：
+
+```json
+{
+  "status": "success",
+  "style_id": "nail_001",
+  "source": "mock",
+  "message": "当前展示为试戴预览效果，真实图像编辑接口已预留。",
+  "result_type": "mock",
+  "result_image_url": "/assets/nail-styles/nail_001.png"
+}
+```
+
+图像编辑服务成功时返回示例：
 
 ```json
 {
   "status": "success",
   "style_id": "nail_001",
   "source": "image_edit",
-  "message": "已通过后端 image editing client 生成试戴图；效果仍需人工验证。",
+  "message": "已通过图像编辑服务生成试戴预览。",
   "result_type": "image_edit",
   "result_image_url": "https://..."
 }
 ```
 
-当图像编辑关闭、未配置 Key、DeepAI 请求失败或返回结果不可用时，接口自动返回 `source: "mock"`。
+返回字段中的 `source` 一定是 `"mock"` 或 `"image_edit"`。图像编辑关闭、配置缺失、请求失败或返回结果不可用时，接口自动返回 `source: "mock"`。
 
 ## 当前限制
 
-- 真实图像级美甲试戴需要 image editing / inpainting 模型，而不是只靠款式推荐文本。
-- 当前仅预留可插拔接口；DeepAI AI Photo Editor 是候选方案之一，需要进一步验证生成质量、手部保持能力和美甲区域控制能力。
-- DeepAI AI Photo Editor 可能没有精确 mask 能力，难以保证只修改指甲区域，因此必须保留 mock fallback。
+- 真实图像级美甲试戴生成尚未作为稳定能力接入。
+- 当前 `/api/try-on` 默认使用 mock 试戴预览。
+- 项目后端已预留 `image_edit_client`，可接入 DeepAI、OpenAI Image Edit、Replicate、Hugging Face Inpainting 等图像编辑服务。
+- 真实美甲试戴需要指甲区域识别、mask 生成和 image editing / inpainting 局部重绘，不是只靠款式推荐文本即可完成。
+- 图像编辑质量依赖模型能力、API 权限、mask 精度与生成稳定性，因此当前版本不把真实生图作为强依赖。
 - 当前未接数据库和登录系统。
 - 当前适合 Hackathon MVP 展示，不是完整商业化系统。
 
 ## 后续规划
 
-- LongCat Omni 手图分析。
-- 指甲区域 mask / 分割。
-- 图像编辑模型局部重绘。
+- 接入稳定 image editing / inpainting API。
+- 增加手图指甲区域 mask。
+- 支持半自动点击指甲区域生成 mask。
+- 支持 LongCat Omni 做手图分析，但不把它描述为生图模型。
+- 未来可扩展真实戴甲图生成。
 - 轻量 RAG 款式知识库。
 - 多模型分层调用。
 - 商家运营日报。

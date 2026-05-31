@@ -35,11 +35,12 @@ export default function TryOnPage({
   const [isGeneratingResult, setIsGeneratingResult] = useState(false);
   const [showMockResult, setShowMockResult] = useState(false);
   const [tryOnMessage, setTryOnMessage] = useState(
-    "当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。",
+    "当前为试戴预览效果，真实图像编辑接口已预留。",
   );
   const [tryOnResultImageUrl, setTryOnResultImageUrl] = useState<string | null>(
     null,
   );
+  const [tryOnSource, setTryOnSource] = useState<"image_edit" | "mock">("mock");
   const [tryOnError, setTryOnError] = useState("");
 
   useEffect(() => {
@@ -110,8 +111,9 @@ export default function TryOnPage({
     setShowMockResult(false);
     setIsGeneratingResult(false);
     setTryOnResultImageUrl(null);
+    setTryOnSource("mock");
     setTryOnError("");
-    setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
+    setTryOnMessage("当前为试戴预览效果，真实图像编辑接口已预留。");
   };
 
   const handleUseExampleHandImage = () => {
@@ -124,15 +126,17 @@ export default function TryOnPage({
     setShowMockResult(false);
     setIsGeneratingResult(false);
     setTryOnResultImageUrl(null);
+    setTryOnSource("mock");
     setTryOnError("");
-    setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
+    setTryOnMessage("当前为试戴预览效果，真实图像编辑接口已预留。");
   };
 
   const showLocalMockResult = (message?: string) => {
     setTryOnResultImageUrl(null);
+    setTryOnSource("mock");
     generationTimerRef.current = window.setTimeout(() => {
       setTryOnMessage(
-        message ?? "当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。",
+        message ?? "当前为试戴预览效果，真实图像编辑接口已预留。",
       );
       setIsGeneratingResult(false);
       setShowMockResult(true);
@@ -147,6 +151,7 @@ export default function TryOnPage({
     setIsGeneratingResult(true);
     setShowMockResult(false);
     setTryOnResultImageUrl(null);
+    setTryOnSource("mock");
     setTryOnError("");
 
     if (generationTimerRef.current) {
@@ -165,6 +170,7 @@ export default function TryOnPage({
       );
       setTryOnMessage(result.message);
       setTryOnResultImageUrl(result.result_image_url);
+      setTryOnSource(result.source);
       setIsGeneratingResult(false);
       setShowMockResult(true);
     } catch (error) {
@@ -183,8 +189,9 @@ export default function TryOnPage({
     setShowMockResult(false);
     setIsGeneratingResult(false);
     setTryOnResultImageUrl(null);
+    setTryOnSource("mock");
     setTryOnError("");
-    setTryOnMessage("当前为 mock 试戴结果，后续可接入真实 AI 图像生成接口。");
+    setTryOnMessage("当前为试戴预览效果，真实图像编辑接口已预留。");
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -258,7 +265,11 @@ export default function TryOnPage({
               onClick={handleGenerateResult}
               disabled={!handImagePreview || isGeneratingResult}
             >
-              {isGeneratingResult ? "AI 试戴结果生成中..." : "生成试戴结果"}
+              {isGeneratingResult ? (
+                <span className="pulse">AI 试戴结果生成中...</span>
+              ) : (
+                "生成试戴结果"
+              )}
             </button>
             {handImagePreview ? (
               <button
@@ -289,6 +300,12 @@ export default function TryOnPage({
 
           {showMockResult ? (
             <section className="try-on-page__result">
+              <p className="try-on-page__status">
+                结果来源：
+                {tryOnSource === "image_edit"
+                  ? "由图像编辑服务生成"
+                  : "当前为试戴预览效果，真实图像编辑接口已预留"}
+              </p>
               <div className="try-on-page__result-images">
                 <figure>
                   <img src={selectedNail.image_path} alt={selectedNail.name} />
@@ -305,8 +322,8 @@ export default function TryOnPage({
                 ) : null}
                 {tryOnResultImageUrl ? (
                   <figure>
-                    <img src={tryOnResultImageUrl} alt="AI 试戴生成图" />
-                    <figcaption>AI 试戴生成图</figcaption>
+                    <img src={tryOnResultImageUrl} alt="试戴预览图" />
+                    <figcaption>试戴预览图</figcaption>
                   </figure>
                 ) : null}
               </div>

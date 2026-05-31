@@ -1,4 +1,5 @@
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -8,12 +9,12 @@ from dotenv import load_dotenv
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 PROJECT_ROOT = BACKEND_DIR.parent
-DEFAULT_BASE_URL = "https://api.deepai.org/api"
 DEFAULT_PROMPT_TEMPLATE = (
     "Keep the original hand, skin tone, pose, lighting, and background unchanged. "
     "Only modify the fingernail areas. Apply a realistic {style_name} manicure "
     "with {style_details}. Do not change the fingers, hand shape, jewelry, or background."
 )
+PLACEHOLDER_KEYS = {"your_key_here", "your_image_edit_api_key_here"}
 
 
 def _load_env_files() -> None:
@@ -32,20 +33,26 @@ _load_env_files()
 
 
 class ImageEditUnavailableError(Exception):
-    """Raised when image editing is disabled or not configured."""
+    """Raised only for callers that need an explicit image-edit unavailable signal."""
 
 
-def _is_enabled() -> bool:
-    return os.getenv("IMAGE_EDIT_ENABLED", "false").strip().lower() == "true"
+@dataclass(frozen=True)
+class ImageEditConfig:
+    enabled: bool
+    provider: str
+    api_key: str
+    base_url: str
+    model: str
 
 
-def _image_editor_url(base_url: str) -> str:
-    url = base_url.strip().rstrip("/") or DEFAULT_BASE_URL
-
-    if url.endswith("/image-editor"):
-        return url
-
-    return f"{url}/image-editor"
+def _read_config() -> ImageEditConfig:
+    return ImageEditConfig(
+        enabled=os.getenv("IMAGE_EDIT_ENABLED", "false").strip().lower() == "true",
+        provider=os.getenv("IMAGE_EDIT_PROVIDER", "").strip().lower(),
+        api_key=os.getenv("IMAGE_EDIT_API_KEY", "").strip(),
+        base_url=os.getenv("IMAGE_EDIT_BASE_URL", "").strip().rstrip("/"),
+        model=os.getenv("IMAGE_EDIT_MODEL", "image-editor").strip(),
+    )
 
 
 def _style_values(style: dict[str, Any], tag_key: str) -> list[str]:
@@ -79,48 +86,75 @@ def build_try_on_prompt(style: dict[str, Any]) -> str:
     )
 
 
-def generate_try_on_image(
+def _provider_endpoint(config: ImageEditConfig) -> str:
+    """Build the configured provider endpoint without assuming a fixed API root."""
+    if config.base_url.endswith(f"/{config.model}"):
+        return config.base_url
+
+    return f"{config.base_url}/{config.model}"
+
+
+def _call_deepai_image_edit(
     image_path: Path,
     style: dict[str, Any],
+    config: ImageEditConfig,
 ) -> dict[str, str] | None:
-    if not _is_enabled():
-        raise ImageEditUnavailableError("Image editing is disabled")
+    """Candidate provider adapter. Additional providers should get their own adapter."""
+    prompt = build_try_on_prompt(style)
 
-    provider = os.getenv("IMAGE_EDIT_PROVIDER", "deepai").strip().lower()
-    if provider != "deepai":
-        raise ImageEditUnavailableError(f"Unsupported image edit provider: {provider}")
+    with image_path.open("rb") as image_file:
+        response = httpx.post(
+            _provider_endpoint(config),
+            headers={"api-key": config.api_key},
+            data={"text": prompt},
+            files={"image": (image_path.name, image_file)},
+            timeout=60,
+        )
 
-    api_key = os.getenv("IMAGE_EDIT_API_KEY", "").strip()
-    if not api_key or api_key == "your_key_here":
-        raise ImageEditUnavailableError("Image edit API key is missing")
+    response.raise_for_status()
+    data = response.json()
+    output_url = data.get("output_url") or data.get("image_url") or data.get("url")
+
+    if not output_url:
+        return None
+
+    return {
+        "provider": config.provider,
+        "result_image_url": str(output_url),
+    }
+
+
+def try_image_edit(image_path: Path, style: dict[str, Any]) -> dict[str, str] | None:
+    """Best-effort image-edit hook. Any disabled, missing, or failed provider falls back."""
+    config = _read_config()
+
+    if not config.enabled:
+        return None
+
+    if not config.api_key or config.api_key in PLACEHOLDER_KEYS:
+        return None
+
+    if not config.base_url:
+        return None
 
     if not image_path.exists():
-        raise ImageEditUnavailableError("Input image file does not exist")
-
-    prompt = build_try_on_prompt(style)
-    base_url = os.getenv("IMAGE_EDIT_BASE_URL", DEFAULT_BASE_URL).strip()
+        return None
 
     try:
-        with image_path.open("rb") as image_file:
-            response = httpx.post(
-                _image_editor_url(base_url),
-                headers={"api-key": api_key},
-                data={"text": prompt},
-                files={"image": (image_path.name, image_file)},
-                timeout=60,
-            )
-        response.raise_for_status()
-        data = response.json()
-        output_url = data.get("output_url") or data.get("image_url") or data.get("url")
+        if config.provider == "deepai":
+            return _call_deepai_image_edit(image_path, style, config)
 
-        if not output_url:
-            print("Image edit response did not include an output URL; falling back to mock.")
-            return None
-
-        return {
-            "provider": provider,
-            "result_image_url": str(output_url),
-        }
+        print(f"Image edit provider is not implemented: {config.provider or 'unset'}")
+        return None
     except (httpx.HTTPError, ValueError, OSError) as error:
         print(f"Image edit request failed, falling back to mock: {type(error).__name__}")
         return None
+
+
+def call_image_edit(image_path: Path, style: dict[str, Any]) -> dict[str, str] | None:
+    """Compatibility wrapper for callers that prefer the older function name."""
+    return try_image_edit(image_path, style)
+
+
+def generate_try_on_image(image_path: Path, style: dict[str, Any]) -> dict[str, str] | None:
+    return try_image_edit(image_path, style)

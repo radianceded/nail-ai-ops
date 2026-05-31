@@ -6,7 +6,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from services.image_edit_client import ImageEditUnavailableError, generate_try_on_image
+from services.image_edit_client import try_image_edit
 from services.llm_client import LLMUnavailableError, call_llm_json
 
 app = FastAPI(
@@ -501,6 +501,14 @@ def find_style_by_id(style_id: str) -> dict[str, Any] | None:
     return None
 
 
+def to_frontend_asset_path(path: str | None) -> str:
+    if not path:
+        return "/assets/nail-styles/nail_001.png"
+
+    normalized_path = path.replace("assets/nail_styles/", "assets/nail-styles/")
+    return normalized_path if normalized_path.startswith("/") else f"/{normalized_path}"
+
+
 @app.get("/api/analysis")
 def get_analysis():
     return load_json("mock_analysis.json")
@@ -621,8 +629,9 @@ async def try_on(
     style = find_style_by_id(style_id) or {"style_id": style_id}
 
     try:
-        image_edit_result = generate_try_on_image(upload_path, style)
-    except ImageEditUnavailableError:
+        image_edit_result = try_image_edit(upload_path, style)
+    except Exception as error:
+        print(f"Image edit hook failed unexpectedly, falling back to mock: {type(error).__name__}")
         image_edit_result = None
 
     if image_edit_result:
@@ -630,18 +639,20 @@ async def try_on(
             "status": "success",
             "style_id": style_id,
             "source": "image_edit",
-            "message": "已通过后端 image editing client 生成试戴图；效果仍需人工验证。",
+            "message": "已通过图像编辑服务生成试戴预览。",
             "result_type": "image_edit",
             "result_image_url": image_edit_result["result_image_url"],
         }
+
+    mock_result_image_url = to_frontend_asset_path(str(style.get("image_path") or ""))
 
     return {
         "status": "success",
         "style_id": style_id,
         "source": "mock",
-        "message": "当前为 mock 试戴结果；真实图像编辑未启用或调用失败。",
+        "message": "当前展示为试戴预览效果，真实图像编辑接口已预留。",
         "result_type": "mock",
-        "result_image_url": None,
+        "result_image_url": mock_result_image_url,
     }
 
 
