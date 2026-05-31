@@ -32,10 +32,12 @@ export default function NailCard({
   matchReason,
 }: NailCardProps) {
   const tags = tagGroups.flatMap((group) => nailStyle.tags[group] ?? []);
+  const displayTags = tags.slice(0, 6);
+  const hiddenTagCount = tags.length - displayTags.length;
   const metaItems = getMetaItems(nailStyle);
 
   return (
-    <article className="nail-card">
+    <article className="nail-card fade-in-up">
       <img
         className="nail-card__image"
         src={nailStyle.image_path}
@@ -47,9 +49,12 @@ export default function NailCard({
           <h2>{nailStyle.name}</h2>
         </div>
         <div className="nail-card__tags" aria-label="款式标签">
-          {tags.map((tag, index) => (
+          {displayTags.map((tag, index) => (
             <span key={`${nailStyle.style_id}-${tag}-${index}`}>{tag}</span>
           ))}
+          {hiddenTagCount > 0 ? (
+            <span className="nail-card__more-tags">+{hiddenTagCount}</span>
+          ) : null}
         </div>
         <div className="nail-card__meta" aria-label="款式信息">
           {metaItems.map((item) => (
