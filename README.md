@@ -337,4 +337,4 @@ mock fallback 返回示例：
 
 ## 业务材料
 
-根目录下的 `美团AI/` 存放业务分析素材，当前已使用英文文件名，例如 `business_value.md`、`merchant_pain_points.md`、`operation_goals.md`、`copywriting_templates.md`。这些材料可作为后续整理到 `docs/business/` 的来源，但 GitHub 首页以本 README 和 `docs/` 为主要入口。
+业务分析材料已整理到 `docs/business/`，包括商业价值、商家痛点、运营目标和文案模板，可用于 PPT、答辩和后续产品表达。
